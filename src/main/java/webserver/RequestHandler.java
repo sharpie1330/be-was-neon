@@ -2,9 +2,6 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +21,17 @@ public class RequestHandler implements Runnable {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+        final String DEFAULT_PATH = "src/main/resources/static/";
+        final String INDEX_HTML = "index.html";
+        File file = new File(DEFAULT_PATH.concat(INDEX_HTML));
+
+        try (
+                InputStream in = connection.getInputStream();
+                OutputStream out = connection.getOutputStream();
+                FileInputStream fileIn = new FileInputStream(file)
+        ) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             StringBuilder httpHeader = new StringBuilder();
 
             String line = br.readLine();
@@ -44,14 +49,10 @@ public class RequestHandler implements Runnable {
 
             DataOutputStream dos = new DataOutputStream(out);
 
-            final String DEFAULT_PATH = "src/main/resources/static/";
-            final String INDEX_HTML = "index.html";
+            byte[] body = new byte[(int) file.length()];
+            int readLen = fileIn.read(body);
 
-            Path filePath = Path.of(DEFAULT_PATH.concat(INDEX_HTML));
-
-            byte[] body = Files.readAllBytes(filePath);
-
-            response200Header(dos, body.length);
+            response200Header(dos, readLen);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -61,17 +62,6 @@ public class RequestHandler implements Runnable {
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response404Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 NOT FOUND \r\n");
             dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
