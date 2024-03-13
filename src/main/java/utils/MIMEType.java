@@ -16,7 +16,7 @@ public enum MIMEType {
         this.mimeType = mimeType;
     }
 
-    public static String getContentType(String extension) {
+    public static String getMimeType(String extension) {
         return Arrays.stream(MIMEType.values())
                 .filter(m -> m.name().equals(extension))
                 .findAny()

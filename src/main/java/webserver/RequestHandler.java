@@ -58,7 +58,7 @@ public class RequestHandler implements Runnable {
         try (FileInputStream fileIn = new FileInputStream(file)){
             byte[] body = new byte[(int) file.length()];
             int readLen = fileIn.read(body);
-            String mimeType = getMimeType(file);
+            String mimeType = getMimeType(file.getName());
             response200Header(dos, readLen, mimeType);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -66,10 +66,9 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private String getMimeType(File file) {
-        String fileName = file.getName();
+    private String getMimeType(String fileName) {
         String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-        return MIMEType.getContentType(extension);
+        return MIMEType.getMimeType(extension);
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String mimeType) {
