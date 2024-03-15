@@ -1,13 +1,13 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.MIMEType;
+
+import static utils.StringUtils.*;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -21,22 +21,60 @@ public class RequestHandler implements Runnable {
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
-
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+        try (
+                InputStream in = connection.getInputStream();
+                OutputStream out = connection.getOutputStream()
+        ) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            StringBuilder httpHeader = new StringBuilder();
+
+            String line = br.readLine();
+            if (line == null) {
+                return;
+            }
+
+            String[] tokens = line.split(" ");
+            String requestMethod = tokens[0];
+            String requestUrl = tokens[1];
+            logger.debug("request Method : {}, request Url : {}", requestMethod, requestUrl);
+
+            while (!line.isEmpty()) {
+                httpHeader.append(appendNewLine(line));
+                line = br.readLine();
+            }
+
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "<h1>Hello World</h1>".getBytes();
-            response200Header(dos, body.length);
+            readFile(dos, requestUrl);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void readFile(DataOutputStream dos, String requestUrl) {
+        final String DEFAULT_PATH = "src/main/resources/static";
+        File file = new File(DEFAULT_PATH.concat(requestUrl));
+
+        try (FileInputStream fileIn = new FileInputStream(file)){
+            byte[] body = new byte[(int) file.length()];
+            int readLen = fileIn.read(body);
+            String mimeType = getMimeType(file.getName());
+            response200Header(dos, readLen, mimeType);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private String getMimeType(String fileName) {
+        String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+        return MIMEType.getMimeType(extension);
+    }
+
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String mimeType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + mimeType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
