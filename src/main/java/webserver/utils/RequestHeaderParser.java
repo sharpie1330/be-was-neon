@@ -10,7 +10,7 @@ public class RequestHeaderParser {
 
     }
 
-    // TODO: value가 ;으로 구분된 경우 고려
+    // TODO: value가 ,으로 구분된 경우 고려
     public Map<String, List<String>> parse(List<String> requestHeader) {
         Map<String, List<String>> headerMap = new HashMap<>();
 

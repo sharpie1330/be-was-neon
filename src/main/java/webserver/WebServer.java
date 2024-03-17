@@ -8,10 +8,11 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.RequestHandler;
+import webserver.utils.PropertyUtils;
 
 public class WebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
-    private static final int DEFAULT_PORT = 8080;
+    private static final int DEFAULT_PORT = PropertyUtils.loadPortFromProperties();
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public static void main(String[] args) throws Exception {

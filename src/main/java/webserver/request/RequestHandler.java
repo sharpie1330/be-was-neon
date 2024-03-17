@@ -9,10 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.MIMEType;
 
+import static webserver.utils.PropertyUtils.loadProperties;
+
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final String CHARSET = loadProperties().getProperty("charset");
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -25,7 +28,7 @@ public class RequestHandler implements Runnable {
                 InputStream in = connection.getInputStream();
                 OutputStream out = connection.getOutputStream()
         ) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, CHARSET));
 
             // request line
             String requestLine = br.readLine();
