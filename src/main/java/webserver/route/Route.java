@@ -26,13 +26,15 @@ public class Route {
 
     private static final String STATIC_SOURCE_PATH = loadStaticSourcePathFromProperties();
     private static final String DEFAULT_HTML = PropertyUtils.loadProperties().getProperty("defaultHtml");
+    private static final String ERROR_404_HTML = PropertyUtils.loadProperties().getProperty("error404Html");
 
     private static final Map<String, String> STATIC_MAPPING = Map.of(
             "/", DEFAULT_HTML,
             "/main", DEFAULT_HTML,
             "/article", DEFAULT_HTML,
             "/login", DEFAULT_HTML,
-            "/registration", DEFAULT_HTML
+            "/registration", DEFAULT_HTML,
+            "default", ERROR_404_HTML
     );
 
     private static final Map<String, Function<HttpRequest, HttpResponse>> REQUEST_MAPPING = Map.of(
@@ -123,7 +125,12 @@ public class Route {
         String requestPath = STATIC_MAPPING.keySet().stream()
                 .filter(key -> key.equals(resourcePath))
                 .findAny()
-                .orElseThrow();//() -> new CustomException(CustomErrorType.PATH_NOT_FOUND)); // 없으면 에러
+                .orElse("default");
+
+        if (requestPath.equals("default")) {
+            return STATIC_SOURCE_PATH.concat("/")
+                    .concat(STATIC_MAPPING.get(requestPath));
+        }
 
         return STATIC_SOURCE_PATH.concat(path)
                 .concat("/")    // 구분자
