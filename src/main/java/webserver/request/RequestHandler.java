@@ -1,13 +1,13 @@
-package webserver;
+package webserver.request;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.MIMEType;
-
-import static utils.StringUtils.*;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,27 +25,26 @@ public class RequestHandler implements Runnable {
                 InputStream in = connection.getInputStream();
                 OutputStream out = connection.getOutputStream()
         ) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            StringBuilder httpHeader = new StringBuilder();
 
-            String line = br.readLine();
-            if (line == null) {
-                return;
+            // request line
+            String requestLine = br.readLine();
+
+            // header
+            List<String> requestHeaders = new ArrayList<>();
+            String line;
+            while (!(line = br.readLine()).isEmpty()) {
+                requestHeaders.add(line);
             }
 
-            String[] tokens = line.split(" ");
-            String requestMethod = tokens[0];
-            String requestUrl = tokens[1];
-            logger.debug("request Method : {}, request Url : {}", requestMethod, requestUrl);
+            // body TODO : read, HttpRequest에서 body parse하는 로직 구성
+            String requestBody = null;
 
-            while (!line.isEmpty()) {
-                httpHeader.append(appendNewLine(line));
-                line = br.readLine();
-            }
+            HttpRequest httpRequest = HttpRequest.of(requestLine, requestHeaders, requestBody);
+            logger.debug("request method : {}, request url : {}", httpRequest.getHttpMethod(), httpRequest.getURL());
 
             DataOutputStream dos = new DataOutputStream(out);
-            readFile(dos, requestUrl);
+            readFile(dos, httpRequest.getURL());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
