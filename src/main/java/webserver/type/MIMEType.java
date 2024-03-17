@@ -1,9 +1,9 @@
-package utils;
+package webserver.type;
 
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 
 public enum MIMEType {
+    txt("txt/plain"),
     svg("image/svg+xml"),
     ico("image/vnd.microsoft.icon"),
     css("text/css"),
@@ -20,7 +20,7 @@ public enum MIMEType {
         return Arrays.stream(MIMEType.values())
                 .filter(m -> m.name().equals(extension))
                 .findAny()
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 파일 확장자입니다."))
+                .orElse(txt)    // default : txt
                 .mimeType;
     }
 }
