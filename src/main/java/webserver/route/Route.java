@@ -63,7 +63,7 @@ public class Route {
         // TODO: 이미 존재하는 유저인지 확인
         User findUser = Database.findUserById(queryParams.get("userId"));
         if (findUser != null) {
-            logger.error("create fail... user already exists");
+            logger.error("create failed... user already exists");
             // throw new CustomException() TODO: 에러 응답 처리
         }
 

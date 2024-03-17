@@ -1,0 +1,44 @@
+/* welcome.css */
+
+/* 제목 스타일 */
+h1 {
+    color: #333;
+    font-size: 2rem;
+    margin-top: 1rem;
+    margin-bottom: 3rem;
+    font-weight: bold;
+}
+
+/* 본문 텍스트 스타일 */
+p {
+    color: #666;
+    font-size: 1.2rem;
+    line-height: 1.6;
+}
+
+/* 시작하기 버튼 스타일 */
+.btn_primary {
+    margin-top: 2rem;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 3px;
+    transition: background-color 0.3s;
+}
+
+.btn_primary:hover {
+    background-color: #0056b3;
+}
+
+/* 본문과 헤더 사이에 공간 추가 */
+.container > div {
+    max-width: 800px;
+    margin: 50px auto; /* 가운데 정렬을 위한 수정 */
+    padding: 70px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}

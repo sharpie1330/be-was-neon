@@ -8,7 +8,9 @@ public enum MIMEType {
     ico("image/vnd.microsoft.icon"),
     css("text/css"),
     html("text/html"),
-    png("image/png");
+    png("image/png"),
+    jsp("text/html"),
+    jpg("image/jpeg");
 
     private final String mimeType;
 
