@@ -22,11 +22,10 @@ public enum MIMEType {
         return mimeType;
     }
 
-    public static String getMimeType(String extension) {
+    public static MIMEType getMimeType(String extension) {
         return Arrays.stream(MIMEType.values())
                 .filter(m -> m.name().equals(extension))
                 .findAny()
-                .orElse(txt)    // default : txt
-                .mimeType;
+                .orElse(txt);    // default : txt
     }
 }

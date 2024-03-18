@@ -67,13 +67,12 @@ public class Route {
         // 이미 존재하는 유저인지 확인
         User findUser = Database.findUserById(queryParams.get("userId"));
         if (findUser != null) {
-            logger.error("create failed... user already exists");
             throw new CustomException(CustomErrorType.USER_ALREADY_EXISTS);
         }
 
         // TODO: 모든 항목이 들어왔는지 확인
         User user = new User(queryParams.get("userId"), queryParams.get("password"),
-                queryParams.get("name"), queryParams.get("email"));
+                queryParams.get("nickname"), queryParams.get("email"));
 
         Database.addUser(user);
 
@@ -81,7 +80,7 @@ public class Route {
 
         final String welcomePage = "/registration/welcome.html";
         return HttpResponse
-                .status(httpRequest.getVersion(), HttpStatusCode.MOVED_PERMANENTLY)
+                .status(httpRequest.getVersion(), HttpStatusCode.FOUND)
                 .location(welcomePage)
                 .build();
     }
@@ -93,15 +92,12 @@ public class Route {
         try (FileInputStream fileIn = new FileInputStream(file)) {
             byte[] body = new byte[(int) file.length()];
             int readLen = fileIn.read(body);
-            String mimeType = MIMEType.getMimeType(URLUtils.getExtension(filePath));
-            return new HttpResponse(
-                    httpRequest.getVersion(),
-                    HttpStatusCode.OK,
-                    Map.of(
-                            "Content-Type", List.of(mimeType, "charset=" + PropertyUtils.loadProperties().getProperty("charset")),
-                            "Content-Length", List.of(String.valueOf(readLen))
-                    ),
-                    body);
+            MIMEType mimeType = MIMEType.getMimeType(URLUtils.getExtension(filePath));
+            return HttpResponse
+                    .ok(httpRequest.getVersion())
+                    .contentLength(readLen)
+                    .contentType(mimeType)
+                    .body(body);
         } catch (IOException e) {
             throw new CustomException(CustomErrorType.SERVER_ERROR, e);
         }
