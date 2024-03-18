@@ -4,9 +4,12 @@ import webserver.type.HttpStatusCode;
 import static webserver.type.HttpStatusCode.*;
 
 public enum CustomErrorType {
+    // 1XXX 서버 요청, 응답 오류
     PATH_NOT_FOUND(NOT_FOUND, 1000, "존재하지 않는 경로입니다."),
     SERVER_ERROR(INTERNAL_SERVER_ERROR, 1001, "서버 내부에 오류가 발생했습니다."),
+    MALFORMED_URL_FORMAT(BAD_REQUEST, 1002, "잘못된 URL 형식입니다."),
 
+    // 2XXX 사용자 관련 오류
     USER_ALREADY_EXISTS(CONFLICT, 2000, "이미 등록된 사용자입니다.")
     ;
 
