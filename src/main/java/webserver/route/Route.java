@@ -1,6 +1,8 @@
 package webserver.route;
 
 import db.Database;
+import exception.CustomErrorType;
+import exception.CustomException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +64,14 @@ public class Route {
         String query = URLUtils.getQuery(httpRequest.getURL());
         Map<String, String> queryParams = URLUtils.configureQuery(query);
 
-        // TODO: 이미 존재하는 유저인지 확인
+        // 이미 존재하는 유저인지 확인
         User findUser = Database.findUserById(queryParams.get("userId"));
         if (findUser != null) {
             logger.error("create failed... user already exists");
-            // throw new CustomException() TODO: 에러 응답 처리
+            throw new CustomException(CustomErrorType.USER_ALREADY_EXISTS);
         }
 
+        // TODO: 모든 항목이 들어왔는지 확인
         User user = new User(queryParams.get("userId"), queryParams.get("password"),
                 queryParams.get("name"), queryParams.get("email"));
 
@@ -77,14 +80,10 @@ public class Route {
         logger.info("user created successfully! - userId : {}", user.getUserId());
 
         final String welcomePage = "/registration/welcome.html";
-        return new HttpResponse(
-                httpRequest.getVersion(),
-                HttpStatusCode.MOVED_PERMANENTLY,
-                Map.of(
-                        "Location", List.of(welcomePage) // TODO: 301 응답 페이지 만들기
-                ),
-                null
-        );
+        return HttpResponse
+                .status(httpRequest.getVersion(), HttpStatusCode.MOVED_PERMANENTLY)
+                .location(welcomePage)
+                .build();
     }
 
     private static HttpResponse getStaticPage(HttpRequest httpRequest) {
@@ -99,18 +98,12 @@ public class Route {
                     httpRequest.getVersion(),
                     HttpStatusCode.OK,
                     Map.of(
-                            "Content-Type", List.of(mimeType, "charset=" + PropertyUtils.loadProperties().getProperty("charsetName")),
+                            "Content-Type", List.of(mimeType, "charset=" + PropertyUtils.loadProperties().getProperty("charset")),
                             "Content-Length", List.of(String.valueOf(readLen))
                     ),
                     body);
         } catch (IOException e) {
-            // TODO: 에러 응답 처리
-            logger.error(e.getMessage());
-            return new HttpResponse(
-                    httpRequest.getVersion(),
-                    HttpStatusCode.OK,
-                    null,
-                    null);
+            throw new CustomException(CustomErrorType.SERVER_ERROR, e);
         }
     }
 
@@ -128,8 +121,7 @@ public class Route {
                 .orElse("default");
 
         if (requestPath.equals("default")) {
-            return STATIC_SOURCE_PATH.concat("/")
-                    .concat(STATIC_MAPPING.get(requestPath));
+            throw new CustomException(CustomErrorType.PATH_NOT_FOUND);
         }
 
         return STATIC_SOURCE_PATH.concat(path)

@@ -32,4 +32,16 @@ public class CustomException extends RuntimeException{
         this.code = code;
         this.errorMessage = errorMessage;
     }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public CustomErrorType getCustomExceptionType() {
+        return customErrorType;
+    }
 }

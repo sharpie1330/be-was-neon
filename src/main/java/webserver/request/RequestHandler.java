@@ -53,7 +53,7 @@ public class RequestHandler implements Runnable {
 
             // socket close
             connection.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }

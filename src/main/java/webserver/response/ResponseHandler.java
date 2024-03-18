@@ -1,5 +1,6 @@
 package webserver.response;
 
+import exception.CustomExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
@@ -13,29 +14,43 @@ public class ResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(ResponseHandler.class);
 
     private final DataOutputStream dos;
+    private final CustomExceptionHandler customExceptionHandler;
 
     public ResponseHandler(OutputStream out) {
         this.dos = new DataOutputStream(out);
+        this.customExceptionHandler = new CustomExceptionHandler();
     }
 
     public void response(HttpRequest httpRequest) {
+        try {
+            HttpResponse httpResponse = Route.route(httpRequest);
+            sendResponse(httpResponse);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            sendResponse(customExceptionHandler.handleException(e, httpRequest));
+        }
+    }
+
+    public void sendResponse(HttpResponse httpResponse) {
         final String NEW_LINE = "\r\n";
 
-        HttpResponse httpResponse = Route.route(httpRequest);
-        String responseLine = httpResponse.getResponseLine();
-        Map<String, List<String>> headerMap = httpResponse.getHeader();
-        byte[] body = httpResponse.getBody();
-
         try {
-            // start line
+            String responseLine = httpResponse.getResponseLine();
+            Map<String, List<String>> headerMap = httpResponse.getHeaders();
+            byte[] body = httpResponse.getBody();
+
+            // response line
             dos.writeBytes(responseLine);
 
             // header
-            for (Map.Entry<String, List<String>> header : headerMap.entrySet()) {
-                dos.writeBytes(header.getKey() + ":" +
-                        header.getValue().stream().reduce("", (x, y) -> x.isEmpty() ? y : x + ";" + y) + NEW_LINE);
+            if (headerMap != null) {
+                for (Map.Entry<String, List<String>> header : headerMap.entrySet()) {
+                    dos.writeBytes(header.getKey() + ":" +
+                            header.getValue().stream().reduce("", (x, y) -> x.isEmpty() ? y : x + ";" + y) +
+                            NEW_LINE);
+                }
+                dos.writeBytes(NEW_LINE);
             }
-            dos.writeBytes(NEW_LINE);
 
             // body
             if (body != null) {
@@ -44,7 +59,7 @@ public class ResponseHandler {
 
             dos.flush();
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error("응답을 보내는 중 에러가 발생했습니다 : {}", e.getMessage());
         }
     }
 }
