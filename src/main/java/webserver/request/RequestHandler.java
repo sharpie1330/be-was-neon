@@ -33,6 +33,10 @@ public class RequestHandler implements Runnable {
 
             // request line
             String requestLine = br.readLine();
+            // 3-way-handshake 처리
+            if (requestLine == null) {
+                return;
+            }
 
             // header
             List<String> requestHeaders = new ArrayList<>();
