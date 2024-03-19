@@ -38,6 +38,8 @@ public class RequestHandler implements Runnable {
                 return;
             }
 
+            // TODO: 유효한 메서드인지, HTTP 프로토콜이 맞는지 확인하는 로직 추가
+
             // header
             List<String> requestHeaders = new ArrayList<>();
             String line;
