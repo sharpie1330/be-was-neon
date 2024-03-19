@@ -10,7 +10,8 @@ public enum MIMEType {
     html("text/html"),
     png("image/png"),
     jsp("text/html"),
-    jpg("image/jpeg");
+    jpg("image/jpeg"),
+    json("application/json");
 
     private final String mimeType;
 

@@ -41,7 +41,7 @@ public class CustomException extends RuntimeException{
         return code;
     }
 
-    public CustomErrorType getCustomExceptionType() {
+    public CustomErrorType getCustomErrorType() {
         return customErrorType;
     }
 }
