@@ -17,7 +17,6 @@ import webserver.utils.URLUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -30,7 +29,7 @@ public class Route {
     private static final String DEFAULT_HTML = PropertyUtils.loadProperties().getProperty("defaultHtml");
     private static final String ERROR_404_HTML = PropertyUtils.loadProperties().getProperty("error404Html");
 
-    private static final Map<String, String> STATIC_MAPPING = Map.of(
+    private final Map<String, String> STATIC_MAPPING = Map.of(
             "/", DEFAULT_HTML,
             "/main", DEFAULT_HTML,
             "/article", DEFAULT_HTML,
@@ -39,16 +38,22 @@ public class Route {
             "default", ERROR_404_HTML
     );
 
-    private static final Map<String, Function<HttpRequest, HttpResponse>> REQUEST_MAPPING = Map.of(
-            "static", Route::getStaticPage,
-            "/user/create", Route::createUser
+    private final Map<String, Function<HttpRequest, HttpResponse>> REQUEST_MAPPING = Map.of(
+            "static", this::getStaticPage,
+            "/user/create", this::createUser
     );
+
+    private static final Route instance = new Route();
 
     private Route() {
 
     }
 
-    public static HttpResponse route(HttpRequest httpRequest) {
+    public static Route getInstance() {
+        return instance;
+    }
+
+    public HttpResponse route(HttpRequest httpRequest) {
         Function<HttpRequest, HttpResponse> method =
                 REQUEST_MAPPING.get(
                         REQUEST_MAPPING.keySet().stream()
@@ -60,7 +65,7 @@ public class Route {
         return method.apply(httpRequest);
     }
 
-    private static HttpResponse createUser(HttpRequest httpRequest) {
+    private HttpResponse createUser(HttpRequest httpRequest) {
         String query = URLUtils.getQuery(httpRequest.getURL());
         Map<String, String> queryParams = URLUtils.configureQuery(query);
 
@@ -85,7 +90,7 @@ public class Route {
                 .build();
     }
 
-    private static HttpResponse getStaticPage(HttpRequest httpRequest) {
+    private HttpResponse getStaticPage(HttpRequest httpRequest) {
         String filePath = getFilePath(URLUtils.getPath(httpRequest.getURL()));
         File file = new File(filePath);
 
@@ -103,7 +108,7 @@ public class Route {
         }
     }
 
-    private static String getFilePath(String path) {
+    private String getFilePath(String path) {
         // 파일 요청이면 그대로 리턴
         if (!URLUtils.getExtension(path).isEmpty()) {
             return STATIC_SOURCE_PATH.concat(path);

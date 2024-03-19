@@ -23,7 +23,7 @@ public class ResponseHandler {
 
     public void response(HttpRequest httpRequest) {
         try {
-            HttpResponse httpResponse = Route.route(httpRequest);
+            HttpResponse httpResponse = Route.getInstance().route(httpRequest);
             sendResponse(httpResponse);
         } catch (Exception e) {
             sendResponse(customExceptionHandler.handleException(e, httpRequest));
