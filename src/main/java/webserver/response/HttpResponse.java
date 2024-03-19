@@ -1,20 +1,18 @@
 package webserver.response;
 
+import webserver.common.HttpHeader;
 import webserver.type.HttpStatusCode;
 import webserver.type.MIMEType;
-import webserver.utils.PropertyUtils;
 
 import java.util.*;
 
 public class HttpResponse {
-    private static final String charset = PropertyUtils.loadProperties().getProperty("charset");
-
     private final String version;
     private final HttpStatusCode httpStatusCode;
-    private final Map<String, List<String>> headers;
+    private final HttpHeader headers;
     private final byte[] body;
 
-    public HttpResponse(String version, HttpStatusCode httpStatusCode, Map<String, List<String>> headers, byte[] body) {
+    public HttpResponse(String version, HttpStatusCode httpStatusCode, HttpHeader headers, byte[] body) {
         this.version = version;
         this.httpStatusCode = httpStatusCode;
         this.headers = headers;
@@ -40,7 +38,7 @@ public class HttpResponse {
         return getVersion() + " " + getHttpStatusCode().getMessage() + "\r\n";
     }
 
-    public Map<String, List<String>> getHeaders() {
+    public HttpHeader getHeaders() {
         return headers;
     }
 
@@ -79,44 +77,48 @@ public class HttpResponse {
     private static class ResponseBuilder implements Builder{
         private final String version;
         private final HttpStatusCode httpStatusCode;
-        private final Map<String, List<String>> headers = new HashMap<>();
+        private final HttpHeader headers;
 
         public ResponseBuilder(String version, HttpStatusCode httpStatusCode) {
             this.version = version;
             this.httpStatusCode = httpStatusCode;
+            this.headers = new HttpHeader();
+        }
+
+        public ResponseBuilder(String version, HttpStatusCode httpStatusCode, HttpHeader headers) {
+            this.version = version;
+            this.httpStatusCode = httpStatusCode;
+            this.headers = headers;
         }
 
         @Override
         public ResponseBuilder header(String headerName, String... headerValues) {
-            List<String> headerValueList = headers.computeIfAbsent(headerName, k -> new ArrayList<>());
-            headerValueList.addAll(Arrays.asList(headerValues));
+            headers.addAll(headerName, List.of(headerValues));
             return this;
         }
 
         @Override
-        public ResponseBuilder headers(Map<String, List<String>> headers) {
-            if (headers != null) {
-                this.headers.putAll(headers);
-            }
+        public ResponseBuilder headers(HttpHeader headers) {
+            this.headers.addAll(headers);
 
             return this;
         }
 
         @Override
         public ResponseBuilder contentLength(long contentLength) {
-            this.header("Content-Length", String.valueOf(contentLength));
+            headers.setContentLength(contentLength);
             return this;
         }
 
         @Override
         public ResponseBuilder contentType(MIMEType mimeType) {
-            this.header("Content-Type", mimeType.getMimeType(), "charset=" + charset);
+            headers.setContentType(mimeType);
             return this;
         }
 
         @Override
         public ResponseBuilder location(String location) {
-            this.header("Location", location);
+            headers.setLocation(location);
             return this;
         }
 
@@ -134,7 +136,7 @@ public class HttpResponse {
     public interface Builder{
         Builder header(String headerName, String... headerValues);
 
-        Builder headers(Map<String, List<String>> headers);
+        Builder headers(HttpHeader headers);
 
         Builder contentLength(long contentLength);
 

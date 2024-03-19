@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public class RequestHeaderParser {
-    public RequestHeaderParser() {
+    private RequestHeaderParser() {
 
     }
 
     // TODO: value가 ,으로 구분된 경우 고려
-    public Map<String, List<String>> parse(List<String> requestHeader) {
+    public static Map<String, List<String>> parse(List<String> requestHeader) {
         Map<String, List<String>> headerMap = new HashMap<>();
 
         for(String headerLine : requestHeader) {
