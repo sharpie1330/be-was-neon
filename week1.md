@@ -20,6 +20,13 @@
 
 ### 구현 내용 및 발생 이슈
 
+- 주요 구현 내용
+  - HttpRequest와 HttpResponse 생성
+  - RequestHandler는 클라이언트에게서 받은 입력을 HttpRequest 객체로 만들어 ResponseHandler에 넘겨주는 역할
+  - ResponseHandler는 RequestHandler에서 전달받은 HttpRequest를 Route 클래스의 route 메서드로 라우팅하고, 결과로 반환된 HttpResponse를 클라이언트에게 전송하는 역할
+  - CustomException과 CustomErrorType, CustomExceptionHandler 생성, ResponseHandler에서 라우팅 중 문제가 발생하면 해당 예외를 응답으로 만들어 반환한다.
+
+---
 [🌐 301 vs 302 상태 코드 차이점 (SEO)](https://inpa.tistory.com/entry/HTTP-🌐-301-vs-302-상태-코드-차이점-💯-완벽-정리)
 
 [HTTP response status codes - HTTP | MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#information_responses)
