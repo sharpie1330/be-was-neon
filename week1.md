@@ -1,5 +1,5 @@
-## Web Server 구현 1
-- 웹 서버 1단계 - index.html 응답, 3단계 - 다양한 컨텐츠 타입 지원
+# Web Server 구현 1
+## 웹 서버 1단계 - index.html 응답, 3단계 - 다양한 컨텐츠 타입 지원
 
 ### 학습 내용
 [소켓, 입출력 스트림, 프로세스와 스레드](https://github.com/sharpie1330/be-was-neon/wiki/%EC%86%8C%EC%BC%93,-%EC%9E%85%EC%B6%9C%EB%A0%A5-%EC%8A%A4%ED%8A%B8%EB%A6%BC,-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%EC%99%80-%EC%8A%A4%EB%A0%88%EB%93%9C)
@@ -14,7 +14,8 @@
 - 우선 해당 경로의 파일을 찾아 바이트 배열로 읽고, 파일의 확장자로 MimeType을 결정한다. 이때 nio 라이브러리를 사용하지 않기 위해 FileInputStream 클래스를 사용해 구현했다.
 - MimeType은 enum 클래스로 만들어서 파일의 확장자와 같은 이름의 enum 상수가 있으면 해당 상수의 mimeType값을 구할 수 있도록 했다.
 
-- 웹 서버 2단계 - GET으로 회원가입
+
+## 웹 서버 2단계 - GET으로 회원가입
 ### 학습 내용
 [[week1] WebServer.java 예제코드 분석](https://github.com/sharpie1330/be-was-neon/wiki/%5Bweek1%5D-WebServer.java-%EC%98%88%EC%A0%9C%EC%BD%94%EB%93%9C-%EB%B6%84%EC%84%9D)
 
