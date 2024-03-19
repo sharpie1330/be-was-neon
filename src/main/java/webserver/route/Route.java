@@ -17,13 +17,19 @@ import webserver.utils.URLUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static webserver.utils.PropertyUtils.loadProperties;
 import static webserver.utils.PropertyUtils.loadStaticSourcePathFromProperties;
 
 public class Route {
     private static final Logger logger = LoggerFactory.getLogger(ResponseHandler.class);
+    private static final String CHARSET = loadProperties().getProperty("charset");
 
     private static final String STATIC_SOURCE_PATH = loadStaticSourcePathFromProperties();
     private static final String DEFAULT_HTML = PropertyUtils.loadProperties().getProperty("defaultHtml");
@@ -69,13 +75,17 @@ public class Route {
         String query = URLUtils.getQuery(httpRequest.getURL());
         Map<String, String> queryParams = URLUtils.configureQuery(query);
 
+        // 쿼리 파리미터 유효성 확인
+        if (!validateUserCreateParam(queryParams)) {
+            throw new CustomException(CustomErrorType.INVALID_VALUE);
+        }
+
         // 이미 존재하는 유저인지 확인
         User findUser = Database.findUserById(queryParams.get("userId"));
         if (findUser != null) {
             throw new CustomException(CustomErrorType.USER_ALREADY_EXISTS);
         }
 
-        // TODO: 모든 항목이 들어왔는지 확인
         User user = new User(queryParams.get("userId"), queryParams.get("password"),
                 queryParams.get("nickname"), queryParams.get("email"));
 
@@ -88,6 +98,31 @@ public class Route {
                 .status(httpRequest.getVersion(), HttpStatusCode.FOUND)
                 .location(welcomePage)
                 .build();
+    }
+
+    private boolean validateUserCreateParam(Map<String, String> queryParams) {
+        String userId;
+        String password;
+        String nickname;
+        String email;
+        try {
+            userId = URLDecoder.decode(queryParams.get("userId"), CHARSET);
+            password = URLDecoder.decode(queryParams.get("password"), CHARSET);
+            nickname = URLDecoder.decode(queryParams.get("nickname"), CHARSET);
+            email = URLDecoder.decode(queryParams.get("email"), CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e.getMessage());
+            throw new CustomException(CustomErrorType.SERVER_ERROR);
+        }
+
+        final String emailRegex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        if (!matcher.matches()) {
+            return false;
+        }
+
+        return !userId.isBlank() && !password.isBlank() && !nickname.isBlank() && !email.isBlank();
     }
 
     private HttpResponse getStaticPage(HttpRequest httpRequest) {
