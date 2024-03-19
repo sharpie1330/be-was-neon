@@ -23,7 +23,7 @@ public class URLUtils {
     }
 
     public static boolean isQueryExists(String requestUrl) {
-        return requestUrl.contains(QUESTION_MARK);
+        return requestUrl.lastIndexOf(QUESTION_MARK) != -1;
     }
 
     public static String getPath(String requestUrl) {
@@ -35,39 +35,31 @@ public class URLUtils {
     }
 
     public static String getQuery(String requestUrl) {
-        int index = requestUrl.lastIndexOf(QUESTION_MARK);
-        if (index != -1) {
-            return requestUrl.substring(index);
-        }
-        return "";
-    }
-
-    public static String getResourcePath(String requestUrl) {
-        String[] pathSplit = requestUrl.replaceFirst(SLASH, EMPTY_STRING).split(SLASH);
-        return SLASH + pathSplit[0];
-    }
-
-    public static Map<String, String> configureQuery(String requestUrl) {
         int firstIndex = requestUrl.indexOf(QUESTION_MARK);
-        int lastIndex = requestUrl.indexOf(QUESTION_MARK);
+        int lastIndex = requestUrl.lastIndexOf(QUESTION_MARK);
 
         // ?가 하나만 있지 않으면 오류
         if (firstIndex != lastIndex) {
             throw new CustomException(CustomErrorType.MALFORMED_URL_FORMAT);
         }
 
+        if (firstIndex != -1) {
+            return requestUrl.substring(firstIndex + 1);
+        }
+        return "";
+    }
+
+    public static Map<String, String> configureQuery(String query) {
         Map<String, String> queryParamMap = new HashMap<>();
 
         // 쿼리가 없으면 오류
-        if (!isQueryExists(requestUrl)) {
+        if (query.isBlank()) {
             throw new IllegalArgumentException("요청 파라미터가 존재하지 않습니다.");
         }
 
-        int index = requestUrl.lastIndexOf(QUESTION_MARK);
-        String paramString = requestUrl.substring(index + 1);
-        String[] query = paramString.split(AMPERSAND);
+        String[] queryStrings = query.split(AMPERSAND);
 
-        for (String queryParam : query) {
+        for (String queryParam : queryStrings) {
             String[] keyValue = queryParam.split(EQUAL, -1);
 
             // =을 기준으로 나눈 개수가 2가 아니거나 key가 없으면 오류

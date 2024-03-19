@@ -150,9 +150,8 @@ public class Route {
         }
 
         // 해당 url 매핑이 있는지 확인
-        String resourcePath = URLUtils.getResourcePath(path);
         String requestPath = STATIC_MAPPING.keySet().stream()
-                .filter(key -> key.equals(resourcePath))
+                .filter(key -> key.equals(path))
                 .findAny()
                 .orElse("default");
 
