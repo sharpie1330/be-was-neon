@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
-import webserver.response.ResponseHandler;
 import webserver.type.HttpStatusCode;
 import webserver.type.MIMEType;
 import webserver.utils.PropertyUtils;
@@ -28,7 +27,7 @@ import static webserver.utils.PropertyUtils.loadProperties;
 import static webserver.utils.PropertyUtils.loadStaticSourcePathFromProperties;
 
 public class Route {
-    private static final Logger logger = LoggerFactory.getLogger(ResponseHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(Route.class);
     private static final String CHARSET = loadProperties().getProperty("charset");
 
     private static final String STATIC_SOURCE_PATH = loadStaticSourcePathFromProperties();
