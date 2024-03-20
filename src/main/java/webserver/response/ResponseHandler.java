@@ -3,6 +3,7 @@ package webserver.response;
 import exception.CustomExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.common.HttpHeader;
 import webserver.request.HttpRequest;
 import webserver.route.Route;
 
@@ -35,15 +36,15 @@ public class ResponseHandler {
 
         try {
             String responseLine = httpResponse.getResponseLine();
-            Map<String, List<String>> headerMap = httpResponse.getHeaders();
+            HttpHeader httpHeader = httpResponse.getHeaders();
             byte[] body = httpResponse.getBody();
 
             // response line
             dos.writeBytes(responseLine);
 
             // header
-            if (headerMap != null) {
-                for (Map.Entry<String, List<String>> header : headerMap.entrySet()) {
+            if (httpHeader != null) {
+                for (Map.Entry<String, List<String>> header : httpHeader.entrySet()) {
                     dos.writeBytes(header.getKey() + ":" +
                             header.getValue().stream().reduce("", (x, y) -> x.isEmpty() ? y : x + ";" + y) +
                             NEW_LINE);

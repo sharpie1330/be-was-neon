@@ -98,7 +98,7 @@ public class HttpResponse {
         }
 
         @Override
-        public ResponseBuilder headers(HttpHeader headers) {
+        public ResponseBuilder headers(Map<String, List<String>> headers) {
             this.headers.addAll(headers);
 
             return this;
@@ -136,7 +136,7 @@ public class HttpResponse {
     public interface Builder{
         Builder header(String headerName, String... headerValues);
 
-        Builder headers(HttpHeader headers);
+        Builder headers(Map<String, List<String>> headers);
 
         Builder contentLength(long contentLength);
 

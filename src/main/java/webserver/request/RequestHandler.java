@@ -38,7 +38,7 @@ public class RequestHandler implements Runnable {
                 return;
             }
 
-            // TODO: 유효한 메서드인지, HTTP 프로토콜이 맞는지 확인하는 로직 추가
+            // TODO: 유효한 메서드인지, HTTP 프로토콜이 맞는지 확인하는 로직 추가, 헤더가 없는 경우 체크?
 
             // header
             List<String> requestHeaders = new ArrayList<>();
@@ -46,10 +46,19 @@ public class RequestHandler implements Runnable {
             while (!(line = br.readLine()).isEmpty()) {
                 requestHeaders.add(line);
             }
-            HttpHeader httpHeader = new HttpHeader(requestHeaders);
+            HttpHeader httpHeader = HttpHeader.of(requestHeaders);
+
+            // Content-Length
+            long contentLength = httpHeader.getContentLength();
 
             // body TODO : read, HttpRequest에서 body parse하는 로직 구성
-            String requestBody = null;
+            StringBuilder requestBodyBuilder = new StringBuilder();
+            while (contentLength > 0L) {
+                char readChar = (char) br.read();
+                requestBodyBuilder.append(readChar);
+                contentLength--;
+            }
+            String requestBody = requestBodyBuilder.toString();
 
             // HttpRequest
             HttpRequest httpRequest = HttpRequest.of(requestLine, httpHeader, requestBody);
