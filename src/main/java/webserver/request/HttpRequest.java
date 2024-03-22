@@ -1,5 +1,6 @@
 package webserver.request;
 
+import webserver.common.HttpBody;
 import webserver.common.HttpHeader;
 import webserver.type.HttpMethod;
 
@@ -8,9 +9,9 @@ public class HttpRequest {
     private final String URL;
     private final String version;
     private final HttpHeader header;
-    private final String body;
+    private final HttpBody body;
 
-    public HttpRequest(HttpMethod httpMethod, String URL, String version, HttpHeader header, String body) {
+    public HttpRequest(HttpMethod httpMethod, String URL, String version, HttpHeader header, HttpBody body) {
         this.httpMethod = httpMethod;
         this.URL = URL;
         this.version = version;
@@ -18,7 +19,7 @@ public class HttpRequest {
         this.body = body;
     }
 
-    public static HttpRequest of(String startLine, HttpHeader header, String requestBody) {
+    public static HttpRequest of(String startLine, HttpHeader header, HttpBody requestBody) {
         // startLine parse
         String[] tokens = startLine.split(" ");
         String requestMethod = tokens[0];
@@ -44,7 +45,7 @@ public class HttpRequest {
         return header;
     }
 
-    public String getBody() {
+    public HttpBody getBody() {
         return body;
     }
 }

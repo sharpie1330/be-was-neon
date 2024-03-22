@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.common.HttpBody;
 import webserver.common.HttpHeader;
 import webserver.response.ResponseHandler;
 
@@ -51,14 +52,14 @@ public class RequestHandler implements Runnable {
             // Content-Length
             long contentLength = httpHeader.getContentLength();
 
-            // body TODO : read, HttpRequest에서 body parse하는 로직 구성
+            // body
             StringBuilder requestBodyBuilder = new StringBuilder();
             while (contentLength > 0L) {
                 char readChar = (char) br.read();
                 requestBodyBuilder.append(readChar);
                 contentLength--;
             }
-            String requestBody = requestBodyBuilder.toString();
+            HttpBody requestBody = HttpBody.of(requestBodyBuilder.toString());
 
             // HttpRequest
             HttpRequest httpRequest = HttpRequest.of(requestLine, httpHeader, requestBody);

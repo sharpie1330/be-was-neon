@@ -2,7 +2,7 @@ package webserver.common;
 
 import webserver.type.MIMEType;
 import webserver.utils.PropertyUtils;
-import webserver.utils.RequestHeaderParser;
+import webserver.utils.RequestParser;
 
 import java.util.*;
 
@@ -19,7 +19,7 @@ public class HttpHeader{
     }
 
     public static HttpHeader of(List<String> headers) {
-        return new HttpHeader(RequestHeaderParser.parse(headers));
+        return new HttpHeader(RequestParser.parseHeader(headers));
     }
 
     public HttpHeader(Map<String, List<String>> headers) {

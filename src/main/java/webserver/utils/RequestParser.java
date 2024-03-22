@@ -1,0 +1,54 @@
+package webserver.utils;
+
+import exception.CustomErrorType;
+import exception.CustomException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class RequestParser {
+    private RequestParser() {
+
+    }
+
+    // TODO: value가 ,으로 구분된 경우 고려
+    public static Map<String, List<String>> parseHeader(List<String> requestHeader) {
+        Map<String, List<String>> headerMap = new HashMap<>();
+
+        for (String headerLine : requestHeader) {
+            String[] keyValue = headerLine.split(":", 2);
+            String headerKey = keyValue[0].trim();
+            List<String> headerValues = new ArrayList<>();
+            for (String headerValue : keyValue[1].split(";")) {
+                headerValues.add(headerValue.trim());
+            }
+            headerMap.put(headerKey, headerValues);
+        }
+
+        return headerMap;
+    }
+
+    public static Map<String, String> parseBody(String body) {
+        Map<String, String> bodyMap = new HashMap<>();
+
+        if (body.isEmpty()) {
+            throw new IllegalArgumentException("요청 바디가 존재하지 않습니다.");
+        }
+
+        for (String entry : body.split("&")) {
+            String[] keyValue = entry.split("=", 2);
+            String key = keyValue[0];
+
+            if (keyValue.length != 2 || key.isBlank()) {
+                throw new CustomException(CustomErrorType.MALFORMED_BODY_FORMAT);
+            }
+
+            String value = keyValue[1];
+            bodyMap.put(key, value);
+        }
+
+        return bodyMap;
+    }
+}
