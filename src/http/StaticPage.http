@@ -1,0 +1,8 @@
+### 메인
+GET localhost:8080
+
+### 메인화면 index.html
+GET localhost:8080/index.html
+
+### 회원가입
+GET localhost:8080/registration

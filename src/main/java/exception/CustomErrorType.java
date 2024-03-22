@@ -9,6 +9,7 @@ public enum CustomErrorType {
     SERVER_ERROR(INTERNAL_SERVER_ERROR, 1001, "서버 내부에 오류가 발생했습니다."),
     MALFORMED_URL_FORMAT(BAD_REQUEST, 1002, "잘못된 URL 형식입니다."),
     MALFORMED_BODY_FORMAT(BAD_REQUEST, 1003, "잘못된 Request Body 형식입니다."),
+    INVALID_REQUEST_METHOD(METHOD_NOT_ALLOWED, 1004, "해당 요청은 유효하지 않습니다."),
     INVALID_VALUE(BAD_REQUEST, 1004, "요청 값이 유효하지 않습니다."),
 
     // 2XXX 사용자 관련 오류

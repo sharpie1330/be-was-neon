@@ -8,6 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
+import webserver.route.requestMapping.RequestMapping;
+import webserver.route.requestMapping.RequestMappingFinder;
+import webserver.route.user.requestManager.UserRequestManager;
+import webserver.type.HttpMethod;
 import webserver.type.HttpStatusCode;
 import webserver.type.MIMEType;
 import webserver.utils.PropertyUtils;
@@ -17,7 +21,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -27,9 +34,6 @@ import static webserver.utils.PropertyUtils.loadProperties;
 import static webserver.utils.PropertyUtils.loadStaticSourcePathFromProperties;
 
 public class Route {
-    private static final Logger logger = LoggerFactory.getLogger(Route.class);
-    private static final String CHARSET = loadProperties().getProperty("charset");
-
     private static final String STATIC_SOURCE_PATH = loadStaticSourcePathFromProperties();
     private static final String DEFAULT_HTML = PropertyUtils.loadProperties().getProperty("defaultHtml");
     private static final String ERROR_404_HTML = PropertyUtils.loadProperties().getProperty("error404Html");
@@ -43,85 +47,76 @@ public class Route {
             "default", ERROR_404_HTML
     );
 
-    private final Map<String, Function<HttpRequest, HttpResponse>> REQUEST_MAPPING = Map.of(
-            "static", this::getStaticPage,
-            "/user/create", this::createUser
-    );
+    private static final List<Class<?>> RequestManagerClasses =
+            List.of(UserRequestManager.class);
+
+    private static final Map<String, RequestMappingFinder> REQUEST_MAPPING_MAP = new HashMap<>();
 
     private static final Route instance = new Route();
 
     private Route() {
-
+        init();
     }
 
     public static Route getInstance() {
         return instance;
     }
 
-    public HttpResponse route(HttpRequest httpRequest) {
-        Function<HttpRequest, HttpResponse> method =
-                REQUEST_MAPPING.get(
-                        REQUEST_MAPPING.keySet().stream()
-                                .filter(key -> key.equals(URLUtils.getPath(httpRequest.getURL())))
-                                .findFirst()
-                                .orElse("static")
-                );
+    // java reflection 활용, 요청 url path와 메서드 매칭
+    private void init() {
+        // RequestManager 클래스들에 대해서만
+        for (Class<?> clazz : RequestManagerClasses) {
+            RequestMappingFinder requestMappingFinder = new RequestMappingFinder(clazz);
+            Method[] methods = clazz.getMethods();
+            for (Method method : methods) {
+                //RequestMapping 어노테이션이 붙은 메서드만
+                if (method.isAnnotationPresent(RequestMapping.class)) {
+                    RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+                    HttpMethod httpMethod = annotation.method();
+                    String[] paths = annotation.path();
 
-        return method.apply(httpRequest);
+                    // path로 매칭된 값이 있는지 조회할 수 있도록 하는 과정
+                    // e.g. /user/create => POST, createUser() 매핑
+                    for (String path : paths) {
+                        // 해당 path가 이미 map에 있으면
+                        if (REQUEST_MAPPING_MAP.containsKey(path)) {
+                            REQUEST_MAPPING_MAP.get(path).set(path, httpMethod, method);
+                        } else {
+                            requestMappingFinder.set(path, httpMethod, method);
+                            REQUEST_MAPPING_MAP.put(path, requestMappingFinder);
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    private HttpResponse createUser(HttpRequest httpRequest) {
-        String query = URLUtils.getQuery(httpRequest.getURL());
-        Map<String, String> queryParams = URLUtils.configureQuery(query);
+    public HttpResponse route(HttpRequest httpRequest) throws Exception{
+        HttpMethod httpMethod = httpRequest.getHttpMethod();
+        String path = URLUtils.getPath(httpRequest.getURL());
 
-        // 쿼리 파리미터 유효성 확인
-        if (!validateUserCreateParam(queryParams)) {
-            throw new CustomException(CustomErrorType.INVALID_VALUE);
+        // url path에 대해 매핑된 http method, method 조회
+        RequestMappingFinder requestMappingFinder = REQUEST_MAPPING_MAP.get(path);
+
+        // 매핑 정보가 있으면
+        if (requestMappingFinder != null) {
+            Class<?> clazz = requestMappingFinder.getClazz();
+            Object o = clazz.getDeclaredConstructor().newInstance();
+
+            Method methodInfo = requestMappingFinder.getMethod(path);
+            HttpMethod httpMethodInfo = requestMappingFinder.getHttpMethod(path);
+
+            // 매핑된 메서드가 있고, 요청의 httpMethod가 일치하면 해당 메서드 실행(httpRequest 전달)
+            if (methodInfo != null && httpMethod.equals(httpMethodInfo)) {
+                return (HttpResponse) methodInfo.invoke(o, httpRequest);
+            }
+
+            // 매핑 정보와 일치하지 않으면 예외 발생
+            throw new CustomException(CustomErrorType.INVALID_REQUEST_METHOD);
         }
 
-        // 이미 존재하는 유저인지 확인
-        User findUser = Database.findUserById(queryParams.get("userId"));
-        if (findUser != null) {
-            throw new CustomException(CustomErrorType.USER_ALREADY_EXISTS);
-        }
-
-        User user = new User(queryParams.get("userId"), queryParams.get("password"),
-                queryParams.get("nickname"), queryParams.get("email"));
-
-        Database.addUser(user);
-
-        logger.info("user created successfully! - userId : {}", user.getUserId());
-
-        final String welcomePage = "/registration/welcome.html";
-        return HttpResponse
-                .status(httpRequest.getVersion(), HttpStatusCode.FOUND)
-                .location(welcomePage)
-                .build();
-    }
-
-    private boolean validateUserCreateParam(Map<String, String> queryParams) {
-        String userId;
-        String password;
-        String nickname;
-        String email;
-        try {
-            userId = URLDecoder.decode(queryParams.get("userId"), CHARSET);
-            password = URLDecoder.decode(queryParams.get("password"), CHARSET);
-            nickname = URLDecoder.decode(queryParams.get("nickname"), CHARSET);
-            email = URLDecoder.decode(queryParams.get("email"), CHARSET);
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage());
-            throw new CustomException(CustomErrorType.SERVER_ERROR);
-        }
-
-        final String emailRegex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
-        Pattern pattern = Pattern.compile(emailRegex);
-        Matcher matcher = pattern.matcher(email);
-        if (!matcher.matches()) {
-            return false;
-        }
-
-        return !userId.isBlank() && !password.isBlank() && !nickname.isBlank() && !email.isBlank();
+        // 정적 페이지 처리
+        return getStaticPage(httpRequest);
     }
 
     private HttpResponse getStaticPage(HttpRequest httpRequest) {

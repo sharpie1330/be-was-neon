@@ -58,8 +58,12 @@ public class HttpResponse {
         return ok(version).body(body);
     }
 
-    public static Builder created(String version, String location) {
-        return new ResponseBuilder(version, HttpStatusCode.CREATED).location(location);
+    public static Builder created(String version) {
+        return new ResponseBuilder(version, HttpStatusCode.CREATED);
+    }
+
+    public static Builder found(String version, String location) {
+        return new ResponseBuilder(version, HttpStatusCode.FOUND).location(location);
     }
 
     public static Builder badRequest(String version) {
@@ -93,7 +97,7 @@ public class HttpResponse {
 
         @Override
         public ResponseBuilder header(String headerName, String... headerValues) {
-            headers.addAll(headerName, List.of(headerValues));
+            headers.addAll(headerName, Arrays.stream(headerValues).toList());
             return this;
         }
 
