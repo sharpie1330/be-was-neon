@@ -7,7 +7,6 @@ import webserver.utils.RequestParser;
 import java.util.*;
 
 public class HttpHeader{
-    private static final String charset = PropertyUtils.loadProperties().getProperty("charset");
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String LOCATION = "Location";

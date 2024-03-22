@@ -1,18 +1,13 @@
 package webserver.route;
 
-import db.Database;
 import exception.CustomErrorType;
 import exception.CustomException;
-import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.route.requestMapping.RequestMapping;
 import webserver.route.requestMapping.RequestMappingFinder;
 import webserver.route.user.requestManager.UserRequestManager;
 import webserver.type.HttpMethod;
-import webserver.type.HttpStatusCode;
 import webserver.type.MIMEType;
 import webserver.utils.PropertyUtils;
 import webserver.utils.URLUtils;
@@ -20,17 +15,11 @@ import webserver.utils.URLUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static webserver.utils.PropertyUtils.loadProperties;
 import static webserver.utils.PropertyUtils.loadStaticSourcePathFromProperties;
 
 public class Route {
