@@ -30,12 +30,12 @@ public class RequestHandler implements Runnable {
                 InputStream in = connection.getInputStream();
                 OutputStream out = connection.getOutputStream()
         ) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, CHARSET));
+            BufferedInputStream bis = new BufferedInputStream(in);
 
             // request line
-            String requestLine = br.readLine();
+            String requestLine = readLine(bis);
             // 3-way-handshake 처리
-            if (requestLine == null) {
+            if (requestLine.isEmpty()) {
                 return;
             }
 
@@ -44,7 +44,7 @@ public class RequestHandler implements Runnable {
             // header
             List<String> requestHeaders = new ArrayList<>();
             String line;
-            while (!(line = br.readLine()).isEmpty()) {
+            while (!(line = readLine(bis)).isEmpty()) {
                 requestHeaders.add(line);
             }
             HttpHeader httpHeader = HttpHeader.of(requestHeaders);
@@ -54,10 +54,13 @@ public class RequestHandler implements Runnable {
 
             // body
             StringBuilder requestBodyBuilder = new StringBuilder();
+            byte[] buffer = new byte[1024];
+            int bytesRead;
             while (contentLength > 0L) {
-                char readChar = (char) br.read();
-                requestBodyBuilder.append(readChar);
-                contentLength--;
+                if((bytesRead = bis.read(buffer, 0, (int) Math.min(buffer.length, contentLength))) == -1) break;
+                String chunk = new String(buffer, 0, bytesRead, CHARSET);
+                requestBodyBuilder.append(chunk);
+                contentLength -= bytesRead;
             }
             HttpBody requestBody = HttpBody.of(requestBodyBuilder.toString());
 
@@ -74,5 +77,23 @@ public class RequestHandler implements Runnable {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private String readLine(BufferedInputStream bis) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int read;
+        while ((read = bis.read()) != -1) {
+            char readChar = (char) read;
+            if (readChar == '\r') {
+                continue;
+            }
+
+            if (readChar == '\n') {
+                break;
+            }
+
+            sb.append(readChar);
+        }
+        return sb.toString();
     }
 }
