@@ -1,7 +1,6 @@
 package webserver.utils;
 
-import exception.CustomErrorType;
-import exception.CustomException;
+import exception.server.MalformedUrlFormatException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +39,7 @@ public class URLUtils {
 
         // ?가 하나만 있지 않으면 오류
         if (firstIndex != lastIndex) {
-            throw new CustomException(CustomErrorType.MALFORMED_URL_FORMAT);
+            throw new MalformedUrlFormatException();
         }
 
         if (firstIndex != -1) {
@@ -64,7 +63,7 @@ public class URLUtils {
 
             // =을 기준으로 나눈 개수가 2가 아니거나 key가 없으면 오류
             if (keyValue.length != 2 || keyValue[0].isBlank()) {
-                throw new CustomException(CustomErrorType.MALFORMED_URL_FORMAT);
+                throw new MalformedUrlFormatException();
             }
 
             String key = keyValue[0];

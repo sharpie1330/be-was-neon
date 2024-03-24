@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.response.ResponseHandler;
+import webserver.type.HttpStatusCode;
 import webserver.type.MIMEType;
 
 import java.io.UnsupportedEncodingException;
@@ -27,13 +28,13 @@ public class CustomExceptionHandler {
     }
 
     private HttpResponse handleCustomException(CustomException ce, HttpRequest httpRequest) {
-        logger.error("[CustomException] url : {} | errorType : {} | errorMessage : {} | cause Exception : {}",
-                httpRequest.getURL(), ce.getCustomErrorType(), ce.getErrorMessage(), ce.getCause());
+        logger.error("[CustomException] url : {} | errorCode : {} | errorMessage : {} | cause Exception : {}",
+                httpRequest.getURL(), ce.getErrorCode(), ce.getErrorMessage(), ce.getCause());
 
-        byte[] jsonBody = createJsonBody(ce.getCustomErrorType());
+        byte[] jsonBody = createJsonBody(ce);
 
         return HttpResponse
-                .status(httpRequest.getVersion(), ce.getCustomErrorType().getHttpStatusCode())
+                .status(httpRequest.getVersion(), ce.getHttpStatusCode())
                 .contentType(MIMEType.json)
                 .contentLength(jsonBody.length)
                 .body(jsonBody);
@@ -43,7 +44,7 @@ public class CustomExceptionHandler {
         logger.error("[Exception] url : {} | errorMessage : {} | cause Exception : {}",
                 httpRequest.getURL(), e.getMessage(), e.getCause());
 
-        byte[] jsonBody = createJsonBody(CustomErrorType.SERVER_ERROR);
+        byte[] jsonBody = createJsonBody(new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR));
 
         return HttpResponse
                 .internalServerError(httpRequest.getVersion())
@@ -52,7 +53,7 @@ public class CustomExceptionHandler {
                 .body(jsonBody);
     }
 
-    private byte[] createJsonBody(CustomErrorType customErrorType) {
+    private byte[] createJsonBody(CustomException customException) {
         String json = String.format(
                 """
                         {
@@ -60,15 +61,15 @@ public class CustomExceptionHandler {
                             "errorMessage":"%s"
                         }
                         """,
-                customErrorType.getCode(),
-                customErrorType.getErrorMessage()
+                customException.getErrorCode(),
+                customException.getErrorMessage()
         );
 
         try {
             return json.getBytes(CHARSET);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
-            throw new CustomException(CustomErrorType.SERVER_ERROR);
+            throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

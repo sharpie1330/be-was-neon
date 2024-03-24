@@ -1,7 +1,7 @@
 package webserver.route.user.requestManager;
 
-import exception.CustomErrorType;
 import exception.CustomException;
+import exception.common.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.HttpBody;
@@ -11,6 +11,7 @@ import webserver.route.requestMapping.RequestMapping;
 import webserver.route.user.data.UserSaveData;
 import webserver.route.user.handler.UserHandler;
 import webserver.type.HttpMethod;
+import webserver.type.HttpStatusCode;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -40,7 +41,7 @@ public class UserRequestManager {
 
         // 쿼리 파리미터 유효성 확인
         if (!validateUserCreateParam(userSaveData)) {
-            throw new CustomException(CustomErrorType.INVALID_VALUE);
+            throw new BadRequestException();
         }
 
         // 유저 생성
@@ -73,7 +74,7 @@ public class UserRequestManager {
             email = URLDecoder.decode(email, CHARSET);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
-            throw new CustomException(CustomErrorType.SERVER_ERROR);
+            throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR);
         }
 
 

@@ -1,6 +1,6 @@
 package webserver.utils;
 
-import exception.CustomErrorType;
+import exception.ExceptionType;
 import exception.CustomException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +37,7 @@ class RequestParserTest {
 
         softAssertions.assertThatThrownBy(() -> RequestParser.parseBody(wrongBodyFormat))
                 .isInstanceOf(CustomException.class)
-                .hasMessage(CustomErrorType.MALFORMED_BODY_FORMAT.getErrorMessage());
+                .hasMessage(ExceptionType.MALFORMED_BODY_FORMAT.getErrorMessage());
 
         softAssertions.assertThat(RequestParser.parseBody(rightBodyFormat))
                 .isEqualTo(Map.of("userId", "hello", "email", "hello@gmail.com", "nickname", "hello", "password", "1234"));

@@ -1,9 +1,10 @@
 package webserver.route.staticPage;
 
-import exception.CustomErrorType;
 import exception.CustomException;
+import exception.server.PathNotFoundException;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
+import webserver.type.HttpStatusCode;
 import webserver.type.MIMEType;
 import webserver.utils.PropertyUtils;
 import webserver.utils.URLUtils;
@@ -47,7 +48,7 @@ public class StaticPageRequestManager {
                     .contentType(mimeType)
                     .body(body);
         } catch (IOException e) {
-            throw new CustomException(CustomErrorType.SERVER_ERROR, e);
+            throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -64,7 +65,7 @@ public class StaticPageRequestManager {
                 .orElse("default");
 
         if (requestPath.equals("default")) {
-            throw new CustomException(CustomErrorType.PATH_NOT_FOUND);
+            throw new PathNotFoundException();
         }
 
         return STATIC_SOURCE_PATH.concat(path)

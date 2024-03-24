@@ -1,7 +1,6 @@
 package webserver.utils;
 
-import exception.CustomErrorType;
-import exception.CustomException;
+import exception.server.MalformedBodyFormatException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +41,7 @@ public class RequestParser {
             String key = keyValue[0];
 
             if (keyValue.length != 2 || key.isBlank()) {
-                throw new CustomException(CustomErrorType.MALFORMED_BODY_FORMAT);
+                throw new MalformedBodyFormatException();
             }
 
             String value = keyValue[1];

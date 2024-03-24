@@ -1,7 +1,7 @@
 package webserver.route;
 
-import exception.CustomErrorType;
 import exception.CustomException;
+import exception.common.MethodNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
@@ -11,6 +11,7 @@ import webserver.route.requestMapping.RequestMappingFinder;
 import webserver.route.staticPage.StaticPageRequestManager;
 import webserver.route.user.requestManager.UserRequestManager;
 import webserver.type.HttpMethod;
+import webserver.type.HttpStatusCode;
 import webserver.utils.URLUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -91,15 +92,15 @@ public class Route {
                 }
 
                 // 매핑 정보와 일치하지 않으면 예외 발생
-                throw new CustomException(CustomErrorType.INVALID_REQUEST_METHOD);
-            } catch (InvocationTargetException e) {
+                throw new MethodNotAllowedException();
+            } catch (InvocationTargetException e) { // TODO: InvocationTargetException 처리
                 Throwable targetException = e.getTargetException();
                 if (targetException instanceof CustomException) {
                     throw (CustomException) targetException;
                 }
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
                 logger.error(e.getMessage());
-                throw new CustomException(CustomErrorType.SERVER_ERROR);
+                throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR);
             }
         }
 

@@ -1,8 +1,7 @@
 package webserver.route.user.handler;
 
 import db.Database;
-import exception.CustomErrorType;
-import exception.CustomException;
+import exception.user.UserAlreadyExistsException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,7 @@ public class UserHandler {
         // 이미 존재하는 유저인지 확인
         User findUser = Database.findUserById(userSaveData.getUserId());
         if (findUser != null) {
-            throw new CustomException(CustomErrorType.USER_ALREADY_EXISTS);
+            throw new UserAlreadyExistsException();
         }
 
         // 유저 저장
