@@ -109,7 +109,7 @@ public class HttpResponse {
         }
 
         @Override
-        public ResponseBuilder contentLength(long contentLength) {
+        public ResponseBuilder contentLength(int contentLength) {
             headers.setContentLength(contentLength);
             return this;
         }
@@ -142,7 +142,7 @@ public class HttpResponse {
 
         Builder headers(Map<String, List<String>> headers);
 
-        Builder contentLength(long contentLength);
+        Builder contentLength(int contentLength);
 
         Builder contentType(MIMEType mimeType);
 

@@ -5,11 +5,13 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import exception.CustomExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.HttpBody;
 import webserver.common.HttpHeader;
 import webserver.response.ResponseHandler;
+import webserver.type.HttpMethod;
 
 import static webserver.utils.PropertyUtils.loadProperties;
 
@@ -42,30 +44,14 @@ public class RequestHandler implements Runnable {
             // TODO: 유효한 메서드인지, HTTP 프로토콜이 맞는지 확인하는 로직 추가, 헤더가 없는 경우 체크?
 
             // header
-            List<String> requestHeaders = new ArrayList<>();
-            String line;
-            while (!(line = readLine(bis)).isEmpty()) {
-                requestHeaders.add(line);
-            }
-            HttpHeader httpHeader = HttpHeader.of(requestHeaders);
-
-            // Content-Length
-            long contentLength = httpHeader.getContentLength();
+            HttpHeader httpHeader = readHeader(bis);
 
             // body
-            StringBuilder requestBodyBuilder = new StringBuilder();
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while (contentLength > 0L) {
-                if((bytesRead = bis.read(buffer, 0, (int) Math.min(buffer.length, contentLength))) == -1) break;
-                String chunk = new String(buffer, 0, bytesRead, CHARSET);
-                requestBodyBuilder.append(chunk);
-                contentLength -= bytesRead;
-            }
-            HttpBody requestBody = HttpBody.of(requestBodyBuilder.toString());
+            int contentLength = httpHeader.getContentLength();
+            HttpBody httpBody = readBody(bis, contentLength);
 
             // HttpRequest
-            HttpRequest httpRequest = HttpRequest.of(requestLine, httpHeader, requestBody);
+            HttpRequest httpRequest = HttpRequest.of(requestLine, httpHeader, httpBody);
             logger.debug("request method : {}, request url : {}", httpRequest.getHttpMethod(), httpRequest.getURL());
 
             // HttpResponse
@@ -79,6 +65,12 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    /**
+     * 한 줄을 읽어 반환한다
+     * @param bis connection의 InputStream을 버퍼링
+     * @return carriage return을 제외하고 newLine 이전 문자를 모두 읽어 문자열로 반환한다
+     * @throws IOException
+     */
     private String readLine(BufferedInputStream bis) throws IOException {
         StringBuilder sb = new StringBuilder();
         int read;
@@ -95,5 +87,43 @@ public class RequestHandler implements Runnable {
             sb.append(readChar);
         }
         return sb.toString();
+    }
+
+    /**
+     * 한 줄씩 읽어 리스트에 저장하고, 해당 리스트를 헤더 생성자에 전달해 헤더 객체를 생성한다
+     * @param bis BufferedInputStream
+     * @return 헤더 객체를 생성해 반환
+     * @throws IOException
+     */
+    private HttpHeader readHeader(BufferedInputStream bis) throws IOException {
+        List<String> requestHeaders = new ArrayList<>();
+        String line;
+        while (!(line = readLine(bis)).isEmpty()) {
+            requestHeaders.add(line);
+        }
+        return HttpHeader.of(requestHeaders);
+    }
+
+    /**
+     * 버퍼 크기 만큼씩 읽어 읽은 바이트를 각각 char 타입으로 바꾸어 String으로 저장한다.
+     * 저장된 String으로 HttpBody 객체를 만들어 반환한다. 헤더에 contentLength 정보가 없으면 빈 body 객체가 생성된다
+     * @param bis BufferedInputStream
+     * @param contentLength 헤더의 Content-Length (int)
+     * @return HttpBody 객체를 만들어 반환
+     * @throws IOException
+     */
+    private HttpBody readBody(BufferedInputStream bis, int contentLength) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while (contentLength > 0L) {
+            if((bytesRead = bis.read(buffer, 0, Math.min(buffer.length, contentLength))) == -1) break;
+            for (int i = 0; i < bytesRead; i++) {
+                stringBuilder.append((char) buffer[i]);
+            }
+            contentLength -= bytesRead;
+        }
+
+        return HttpBody.of(stringBuilder.toString());
     }
 }

@@ -25,12 +25,12 @@ public class HttpHeader{
         this.headers = headers;
     }
 
-    public long getContentLength() {
+    public int getContentLength() {
         String contentLength = getFirst(CONTENT_LENGTH);
-        return contentLength != null ? Long.parseLong(contentLength) : -1L;
+        return contentLength != null ? Integer.parseInt(contentLength) : -1;
     }
 
-    public void setContentLength(long contentLength) {
+    public void setContentLength(int contentLength) {
         set(CONTENT_LENGTH, String.valueOf(contentLength));
     }
 
