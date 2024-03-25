@@ -34,7 +34,7 @@ public class ResponseHandler {
             HttpResponse httpResponse = Route.getInstance().route(httpRequest);
             sendResponse(httpResponse);
         } catch (Exception e) {
-            sendResponse(customExceptionHandler.handleException(e, httpRequest));
+            sendResponse(customExceptionHandler.handleException(e));
         }
     }
 

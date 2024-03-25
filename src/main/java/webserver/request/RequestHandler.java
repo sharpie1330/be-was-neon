@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import exception.CustomExceptionHandler;
+import exception.server.TooLargeInputException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.HttpBody;
@@ -12,11 +14,8 @@ import webserver.common.HttpHeader;
 import webserver.common.HttpRequestLine;
 import webserver.response.ResponseHandler;
 
-import static webserver.utils.PropertyUtils.loadProperties;
-
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static final String CHARSET = loadProperties().getProperty("charset");
 
     private final Socket connection;
 
@@ -32,6 +31,7 @@ public class RequestHandler implements Runnable {
                 OutputStream out = connection.getOutputStream()
         ) {
             BufferedInputStream bis = new BufferedInputStream(in);
+            ResponseHandler responseHandler = new ResponseHandler(out);
 
             // request line
             String requestLine = readLine(bis);
@@ -45,20 +45,23 @@ public class RequestHandler implements Runnable {
             HttpHeader httpHeader = readHeader(bis);
 
             // body
-            int contentLength = httpHeader.getContentLength();
+            int contentLength;
+            try {
+                contentLength = httpHeader.getContentLength();
+            } catch (NumberFormatException e) {
+                responseHandler.sendResponse(new CustomExceptionHandler().handleException(new TooLargeInputException()));
+                return;
+            }
             HttpBody httpBody = readBody(bis, contentLength);
 
             // HttpRequest
             HttpRequest httpRequest = new HttpRequest(httpRequestLine, httpHeader, httpBody);
-
-            // HttpResponse
-            ResponseHandler responseHandler = new ResponseHandler(out);
             responseHandler.response(httpRequest);
 
             // socket close
             connection.close();
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.debug(e.getMessage());
         }
     }
 

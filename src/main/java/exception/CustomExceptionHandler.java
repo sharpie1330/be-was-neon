@@ -2,12 +2,13 @@ package exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.response.ResponseHandler;
 import webserver.type.HttpStatusCode;
 import webserver.type.MIMEType;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
 import static webserver.utils.PropertyUtils.loadProperties;
@@ -20,34 +21,34 @@ public class CustomExceptionHandler {
 
     }
 
-    public HttpResponse handleException(Exception e, HttpRequest httpRequest) {
+    public HttpResponse handleException(Exception e) {
         if (e instanceof CustomException ce) {
-            return handleCustomException(ce, httpRequest);
+            return handleCustomException(ce);
         }
-        return handleOtherException(e, httpRequest);
+        return handleOtherException(e);
     }
 
-    private HttpResponse handleCustomException(CustomException ce, HttpRequest httpRequest) {
-        logger.error("[CustomException] url : {} | errorCode : {} | errorMessage : {} | cause Exception : {}",
-                httpRequest.getRequestLine().getURL(), ce.getErrorCode(), ce.getErrorMessage(), ce.getCause());
+    private HttpResponse handleCustomException(CustomException ce) {
+        logger.error("[CustomException] errorCode : {} | errorMessage : {} | cause Exception : {}",
+                ce.getErrorCode(), ce.getErrorMessage(), getExceptionStackTrace(ce));
 
         byte[] jsonBody = createJsonBody(ce);
 
         return HttpResponse
-                .status(httpRequest.getRequestLine().getVersion(), ce.getHttpStatusCode())
+                .status("HTTP/1.1", ce.getHttpStatusCode())
                 .contentType(MIMEType.json)
                 .contentLength(jsonBody.length)
                 .body(jsonBody);
     }
 
-    private HttpResponse handleOtherException(Exception e, HttpRequest httpRequest) {
-        logger.error("[Exception] url : {} | errorMessage : {} | cause Exception : {}",
-                httpRequest.getRequestLine().getURL(), e.getMessage(), e.getCause());
+    private HttpResponse handleOtherException(Exception e) {
+        logger.error("[Exception] errorMessage : {} | cause Exception : {}",
+                e.getMessage(), getExceptionStackTrace(e));
 
         byte[] jsonBody = createJsonBody(new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR));
 
         return HttpResponse
-                .internalServerError(httpRequest.getRequestLine().getVersion())
+                .internalServerError("HTTP/1.1")
                 .contentType(MIMEType.json)
                 .contentLength(jsonBody.length)
                 .body(jsonBody);
@@ -71,5 +72,11 @@ public class CustomExceptionHandler {
             logger.error(e.getMessage());
             throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private String getExceptionStackTrace(Exception ex) {
+        StringWriter stringWriter = new StringWriter();
+        ex.printStackTrace(new PrintWriter(stringWriter));
+        return String.valueOf(stringWriter);
     }
 }

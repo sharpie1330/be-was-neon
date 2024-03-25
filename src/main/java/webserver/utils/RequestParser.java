@@ -1,13 +1,18 @@
 package webserver.utils;
 
+import exception.CustomException;
 import exception.server.MalformedBodyFormatException;
+import webserver.type.HttpStatusCode;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RequestParser {
+    public static final String CHARSET = PropertyUtils.loadProperties().getProperty("charset");
+
     private RequestParser() {
 
     }
@@ -30,24 +35,34 @@ public class RequestParser {
     }
 
     public static Map<String, String> parseBody(String body) {
-        Map<String, String> bodyMap = new HashMap<>();
-
         if (body.isEmpty()) {
             throw new IllegalArgumentException("요청 바디가 존재하지 않습니다.");
         }
 
-        for (String entry : body.split("&")) {
-            String[] keyValue = entry.split("=", 2);
-            String key = keyValue[0];
+        try{
+            byte[] bytes = new byte[body.length()];
+            for (int i = 0; i < body.length(); i++) {
+                bytes[i] = (byte) body.charAt(i);
+            }
+            body = new String(bytes, CHARSET);
 
-            if (keyValue.length != 2 || key.isBlank()) {
-                throw new MalformedBodyFormatException();
+            Map<String, String> bodyMap = new HashMap<>();
+
+            for (String entry : body.split("&")) {
+                String[] keyValue = entry.split("=", 2);
+                String key = keyValue[0];
+
+                if (keyValue.length != 2 || key.isBlank()) {
+                    throw new MalformedBodyFormatException();
+                }
+
+                String value = keyValue[1];
+                bodyMap.put(key, value);
             }
 
-            String value = keyValue[1];
-            bodyMap.put(key, value);
+            return bodyMap;
+        } catch (UnsupportedEncodingException e) {
+            throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR, e);
         }
-
-        return bodyMap;
     }
 }

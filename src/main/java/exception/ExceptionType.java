@@ -5,6 +5,7 @@ import exception.common.MethodNotAllowedException;
 import exception.server.MalformedBodyFormatException;
 import exception.server.MalformedUrlFormatException;
 import exception.server.PathNotFoundException;
+import exception.server.TooLargeInputException;
 import exception.user.UserAlreadyExistsException;
 
 import java.util.Arrays;
@@ -17,6 +18,7 @@ public enum ExceptionType {
     MALFORMED_BODY_FORMAT(1003, "잘못된 Request Body 형식입니다.", MalformedBodyFormatException.class),
     INVALID_REQUEST_METHOD(1004, "지원하지 않는 요청 메서드입니다.", MethodNotAllowedException.class),
     INVALID_VALUE(1005, "요청 값이 유효하지 않습니다.", BadRequestException.class),
+    TOO_LARGE_INPUT(1006, "int 정수 범위 이상의 길이를 갖는 값은 처리할 수 없습니다.", TooLargeInputException.class),
 
     // 2XXX 사용자 관련 오류
     USER_ALREADY_EXISTS(2000, "이미 등록된 사용자입니다.", UserAlreadyExistsException.class),

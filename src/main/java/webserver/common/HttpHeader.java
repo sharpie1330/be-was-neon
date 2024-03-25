@@ -1,7 +1,6 @@
 package webserver.common;
 
 import webserver.type.MIMEType;
-import webserver.utils.PropertyUtils;
 import webserver.utils.RequestParser;
 
 import java.util.*;
