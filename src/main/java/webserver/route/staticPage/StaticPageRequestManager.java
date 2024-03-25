@@ -35,7 +35,7 @@ public class StaticPageRequestManager {
     }
 
     public HttpResponse getStaticPage(HttpRequest httpRequest) {
-        String filePath = getFilePath(URLUtils.getPath(httpRequest.getURL()));
+        String filePath = getFilePath(URLUtils.getPath(httpRequest.getRequestLine().getURL()));
         File file = new File(filePath);
 
         try (FileInputStream fileIn = new FileInputStream(file)) {
@@ -43,7 +43,7 @@ public class StaticPageRequestManager {
             int readLen = fileIn.read(body);
             MIMEType mimeType = MIMEType.getMimeType(URLUtils.getExtension(filePath));
             return HttpResponse
-                    .ok(httpRequest.getVersion())
+                    .ok(httpRequest.getRequestLine().getVersion())
                     .contentLength(readLen)
                     .contentType(mimeType)
                     .body(body);

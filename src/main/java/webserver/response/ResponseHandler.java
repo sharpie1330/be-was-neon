@@ -1,6 +1,7 @@
 package webserver.response;
 
 import exception.CustomExceptionHandler;
+import exception.common.MethodNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.HttpHeader;
@@ -24,6 +25,12 @@ public class ResponseHandler {
 
     public void response(HttpRequest httpRequest) {
         try {
+            // requestLine 유효성 검사
+            if (!httpRequest.getRequestLine().isValid()) {
+                throw new MethodNotAllowedException();
+            }
+            logger.debug("request method : {}, request url : {}", httpRequest.getRequestLine().getHttpMethod(), httpRequest.getRequestLine().getURL());
+
             HttpResponse httpResponse = Route.getInstance().route(httpRequest);
             sendResponse(httpResponse);
         } catch (Exception e) {

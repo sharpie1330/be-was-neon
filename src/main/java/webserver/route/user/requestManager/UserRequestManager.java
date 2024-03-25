@@ -51,7 +51,7 @@ public class UserRequestManager {
         // redirect 응답 전송
         final String welcomePage = "/registration/welcome.html";
         return HttpResponse
-                .found(httpRequest.getVersion(), welcomePage)
+                .found(httpRequest.getRequestLine().getVersion(), welcomePage)
                 .build();
     }
 

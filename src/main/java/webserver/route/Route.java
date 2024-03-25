@@ -71,8 +71,8 @@ public class Route {
     }
 
     public HttpResponse route(HttpRequest httpRequest){
-        HttpMethod httpMethod = httpRequest.getHttpMethod();
-        String path = URLUtils.getPath(httpRequest.getURL());
+        HttpMethod httpMethod = httpRequest.getRequestLine().getHttpMethod();
+        String path = URLUtils.getPath(httpRequest.getRequestLine().getURL());
 
         // url path에 대해 매핑된 http method, method 조회
         RequestMappingFinder requestMappingFinder = REQUEST_MAPPING_MAP.get(path);

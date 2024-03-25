@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.HttpBody;
 import webserver.common.HttpHeader;
+import webserver.common.HttpRequestLine;
 import webserver.response.ResponseHandler;
 
 import static webserver.utils.PropertyUtils.loadProperties;
@@ -38,8 +39,7 @@ public class RequestHandler implements Runnable {
             if (requestLine.isEmpty()) {
                 return;
             }
-
-            // TODO: 유효한 메서드인지, HTTP 프로토콜이 맞는지 확인하는 로직 추가, 헤더가 없는 경우 체크?
+            HttpRequestLine httpRequestLine = new HttpRequestLine(requestLine);
 
             // header
             HttpHeader httpHeader = readHeader(bis);
@@ -49,8 +49,7 @@ public class RequestHandler implements Runnable {
             HttpBody httpBody = readBody(bis, contentLength);
 
             // HttpRequest
-            HttpRequest httpRequest = HttpRequest.of(requestLine, httpHeader, httpBody);
-            logger.debug("request method : {}, request url : {}", httpRequest.getHttpMethod(), httpRequest.getURL());
+            HttpRequest httpRequest = new HttpRequest(httpRequestLine, httpHeader, httpBody);
 
             // HttpResponse
             ResponseHandler responseHandler = new ResponseHandler(out);

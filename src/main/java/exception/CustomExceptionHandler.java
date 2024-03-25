@@ -29,12 +29,12 @@ public class CustomExceptionHandler {
 
     private HttpResponse handleCustomException(CustomException ce, HttpRequest httpRequest) {
         logger.error("[CustomException] url : {} | errorCode : {} | errorMessage : {} | cause Exception : {}",
-                httpRequest.getURL(), ce.getErrorCode(), ce.getErrorMessage(), ce.getCause());
+                httpRequest.getRequestLine().getURL(), ce.getErrorCode(), ce.getErrorMessage(), ce.getCause());
 
         byte[] jsonBody = createJsonBody(ce);
 
         return HttpResponse
-                .status(httpRequest.getVersion(), ce.getHttpStatusCode())
+                .status(httpRequest.getRequestLine().getVersion(), ce.getHttpStatusCode())
                 .contentType(MIMEType.json)
                 .contentLength(jsonBody.length)
                 .body(jsonBody);
@@ -42,12 +42,12 @@ public class CustomExceptionHandler {
 
     private HttpResponse handleOtherException(Exception e, HttpRequest httpRequest) {
         logger.error("[Exception] url : {} | errorMessage : {} | cause Exception : {}",
-                httpRequest.getURL(), e.getMessage(), e.getCause());
+                httpRequest.getRequestLine().getURL(), e.getMessage(), e.getCause());
 
         byte[] jsonBody = createJsonBody(new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR));
 
         return HttpResponse
-                .internalServerError(httpRequest.getVersion())
+                .internalServerError(httpRequest.getRequestLine().getVersion())
                 .contentType(MIMEType.json)
                 .contentLength(jsonBody.length)
                 .body(jsonBody);
