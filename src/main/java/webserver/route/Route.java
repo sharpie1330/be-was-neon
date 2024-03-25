@@ -70,7 +70,7 @@ public class Route {
         }
     }
 
-    public HttpResponse route(HttpRequest httpRequest){
+    public HttpResponse route(HttpRequest httpRequest) throws Exception{
         HttpMethod httpMethod = httpRequest.getRequestLine().getHttpMethod();
         String path = URLUtils.getPath(httpRequest.getRequestLine().getURL());
 
@@ -93,11 +93,12 @@ public class Route {
 
                 // 매핑 정보와 일치하지 않으면 예외 발생
                 throw new MethodNotAllowedException();
-            } catch (InvocationTargetException e) { // TODO: InvocationTargetException 처리
+            } catch (InvocationTargetException e) {
                 Throwable targetException = e.getTargetException();
                 if (targetException instanceof CustomException) {
                     throw (CustomException) targetException;
                 }
+                throw (Exception) targetException;
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
                 logger.error(e.getMessage());
                 throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR);
