@@ -5,13 +5,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import exception.CustomExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.HttpBody;
 import webserver.common.HttpHeader;
 import webserver.response.ResponseHandler;
-import webserver.type.HttpMethod;
 
 import static webserver.utils.PropertyUtils.loadProperties;
 
@@ -124,6 +122,6 @@ public class RequestHandler implements Runnable {
             contentLength -= bytesRead;
         }
 
-        return HttpBody.of(stringBuilder.toString());
+        return new HttpBody(stringBuilder.toString());
     }
 }

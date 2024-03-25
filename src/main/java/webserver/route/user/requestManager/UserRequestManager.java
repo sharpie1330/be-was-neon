@@ -5,6 +5,7 @@ import exception.common.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.HttpBody;
+import webserver.common.KeyValueHttpBody;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.route.requestMapping.RequestMapping;
@@ -32,8 +33,8 @@ public class UserRequestManager {
 
     @RequestMapping(path = "/user/create", method = HttpMethod.POST)
     public HttpResponse createUser(HttpRequest httpRequest) {
-        // body 얻기
-        HttpBody body = httpRequest.getBody();
+        // body 얻어서 keyValueMap으로 변경
+        KeyValueHttpBody body = KeyValueHttpBody.of(httpRequest.getBody());
 
         // 저장할 정보 객체 생성
         UserSaveData userSaveData = new UserSaveData(body.get("userId"), body.get("password"),
