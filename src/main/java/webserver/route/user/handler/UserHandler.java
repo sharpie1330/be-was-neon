@@ -15,9 +15,8 @@ public class UserHandler {
     }
 
     public void userCreate(UserSaveData userSaveData) {
-        // 이미 존재하는 유저인지 확인
-        User findUser = Database.findUserById(userSaveData.getUserId());
-        if (findUser != null) {
+        // 이미 존재하는 유저인지 확인;
+        if (Database.findUserById(userSaveData.getUserId()).isPresent()) {
             throw new UserAlreadyExistsException();
         }
 
