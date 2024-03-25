@@ -4,7 +4,6 @@ import exception.CustomException;
 import exception.common.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.common.HttpBody;
 import webserver.common.KeyValueHttpBody;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;

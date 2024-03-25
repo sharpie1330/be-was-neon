@@ -11,6 +11,7 @@ import webserver.utils.URLUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 
@@ -47,25 +48,28 @@ public class StaticPageRequestManager {
                     .contentLength(readLen)
                     .contentType(mimeType)
                     .body(body);
+        } catch (FileNotFoundException e) {
+            throw new PathNotFoundException();
         } catch (IOException e) {
             throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 
     private String getFilePath(String path) {
-        // 파일 요청이면 그대로 리턴
-        if (!URLUtils.getExtension(path).isEmpty()) {
-            return STATIC_SOURCE_PATH.concat(path);
-        }
-
         // 해당 url 매핑이 있는지 확인
         String requestPath = STATIC_MAPPING.keySet().stream()
-                .filter(key -> key.equals(path))
+                .filter(path::contains)
                 .findAny()
                 .orElse("default");
 
+        // 매칭되는 url이 없으면 예외
         if (requestPath.equals("default")) {
             throw new PathNotFoundException();
+        }
+
+        // 파일 요청이면 그대로 리턴
+        if (!URLUtils.getExtension(path).isEmpty()) {
+            return STATIC_SOURCE_PATH.concat(path);
         }
 
         return STATIC_SOURCE_PATH.concat(path)
