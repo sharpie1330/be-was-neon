@@ -1,11 +1,17 @@
 package webserver.request;
 
+import db.Database;
+import model.User;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,6 +19,16 @@ class RequestHandlerTest {
     private Socket clientSocket;
     private ServerSocket listenSocket;
     private PrintWriter printWriter;
+
+    @BeforeEach
+    @AfterEach
+    @SuppressWarnings("unchecked")
+    void clear() throws NoSuchFieldException, IllegalAccessException {
+        Field userMap = Database.class.getDeclaredField("users");
+        userMap.setAccessible(true);
+        Map<String, User> users = (Map<String, User>) userMap.get(Database.class);
+        users.clear();
+    }
 
     @Test
     @DisplayName("서버에 HTTP 요청을 보내면 응답이 돌아와야 한다.")

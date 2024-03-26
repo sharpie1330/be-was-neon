@@ -2,6 +2,7 @@ package webserver.route.user.requestManager;
 
 import db.Database;
 import model.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,9 @@ import webserver.response.HttpResponse;
 import webserver.type.HttpStatusCode;
 import webserver.utils.RequestParser;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -24,6 +27,16 @@ class UserRequestManagerTest {
     @BeforeEach
     void setUp() {
         userRequestManager = new UserRequestManager();
+    }
+
+    @BeforeEach
+    @AfterEach
+    @SuppressWarnings("unchecked")
+    void clear() throws NoSuchFieldException, IllegalAccessException {
+        Field userMap = Database.class.getDeclaredField("users");
+        userMap.setAccessible(true);
+        Map<String, User> users = (Map<String, User>) userMap.get(Database.class);
+        users.clear();
     }
 
     @Test
