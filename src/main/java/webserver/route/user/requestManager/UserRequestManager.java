@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import webserver.common.KeyValueHttpBody;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
-import webserver.route.requestMapping.RequestMapping;
+import webserver.annotation.requestMapping.RequestMapping;
 import webserver.route.user.data.UserSaveData;
 import webserver.route.user.handler.UserHandler;
 import webserver.type.HttpMethod;
@@ -40,7 +40,7 @@ public class UserRequestManager {
 
         // 쿼리 파리미터 유효성 확인
         if (!validateUserCreateParam(userSaveData)) {
-            throw new BadRequestException();
+            throw new BadRequestException("사용자 데이터가 유효하지 않습니다.");
         }
 
         // 유저 생성
