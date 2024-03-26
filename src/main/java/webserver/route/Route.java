@@ -4,6 +4,7 @@ import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.route.router.DynamicPageRouter;
 import webserver.route.router.StaticPageRouter;
+import webserver.type.HttpMethod;
 import webserver.utils.PropertyUtils;
 import webserver.utils.URLUtils;
 
@@ -42,7 +43,9 @@ public class Route {
     public HttpResponse route(HttpRequest httpRequest) throws Exception{
         String filePath = getFilePath(URLUtils.getPath(httpRequest.getRequestLine().getURL()));
 
-        if (!filePath.equals("default")) {
+        // GET 요청이고, STATIC_MAPPING에서 경로 조회한 결과가 default인 경우에만 정적 페이지 라우팅
+        if (httpRequest.getRequestLine().getHttpMethod().equals(HttpMethod.GET) &&
+                !filePath.equals("default")) {
             return staticPageRouter.routeStaticPage(httpRequest, filePath);
         }
 
