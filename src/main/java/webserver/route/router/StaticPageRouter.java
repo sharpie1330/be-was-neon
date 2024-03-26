@@ -1,4 +1,4 @@
-package webserver.route.staticPage;
+package webserver.route.router;
 
 import exception.CustomException;
 import exception.server.PathNotFoundException;
@@ -13,14 +13,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class StaticPageRequestManager {
-    private static final StaticPageRequestManager instance = new StaticPageRequestManager();
+public class StaticPageRouter {
+    private static final StaticPageRouter instance = new StaticPageRouter();
 
-    private StaticPageRequestManager() {
+    private StaticPageRouter() {
 
     }
 
-    public static StaticPageRequestManager getInstance() {
+    public static StaticPageRouter getInstance() {
         return instance;
     }
 

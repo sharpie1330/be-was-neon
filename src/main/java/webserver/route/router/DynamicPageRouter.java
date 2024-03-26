@@ -1,4 +1,4 @@
-package webserver.route.staticPage;
+package webserver.route.router;
 
 import exception.CustomException;
 import exception.common.MethodNotAllowedException;
@@ -20,21 +20,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DynamicPageRequestManager {
-    private static final Logger logger = LoggerFactory.getLogger(DynamicPageRequestManager.class);
+public class DynamicPageRouter {
+    private static final Logger logger = LoggerFactory.getLogger(DynamicPageRouter.class);
 
     private static final List<Class<?>> RequestManagerClasses =
             List.of(UserRequestManager.class);
 
     private static final Map<String, RequestMappingFinder> REQUEST_MAPPING_MAP = new HashMap<>();
 
-    private static final DynamicPageRequestManager instance = new DynamicPageRequestManager();
+    private static final DynamicPageRouter instance = new DynamicPageRouter();
 
-    private DynamicPageRequestManager() {
+    private DynamicPageRouter() {
         init();
     }
 
-    public static DynamicPageRequestManager getInstance() {
+    public static DynamicPageRouter getInstance() {
         return instance;
     }
 
