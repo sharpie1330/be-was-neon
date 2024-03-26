@@ -10,7 +10,7 @@ import java.util.Set;
 public class KeyValueHttpBody {
     private final Map<String, String> body;
 
-    public KeyValueHttpBody() {
+    private KeyValueHttpBody() {
         this.body = new HashMap<>();
     }
 
