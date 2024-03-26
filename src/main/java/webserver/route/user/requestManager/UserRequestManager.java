@@ -36,8 +36,7 @@ public class UserRequestManager {
         KeyValueHttpBody body = KeyValueHttpBody.of(httpRequest.getBody());
 
         // 저장할 정보 객체 생성
-        UserSaveData userSaveData = new UserSaveData(body.get("userId"), body.get("password"),
-                body.get("nickname"), body.get("email"));
+        UserSaveData userSaveData = createSaveData(body);
 
         // 쿼리 파리미터 유효성 확인
         if (!validateUserCreateParam(userSaveData)) {
@@ -54,6 +53,20 @@ public class UserRequestManager {
                 .build();
     }
 
+    private UserSaveData createSaveData(KeyValueHttpBody body) {
+        // 디코딩
+        try {
+            String userId = URLDecoder.decode(body.get("userId"), CHARSET);
+            String password = URLDecoder.decode(body.get("password"), CHARSET);
+            String nickname = URLDecoder.decode(body.get("nickname"), CHARSET);
+            String email = URLDecoder.decode(body.get("email"), CHARSET);
+            return new UserSaveData(userId, password, nickname, email);
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e.getMessage());
+            throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // 유저 생성 파라미터 유효성 확인
     private boolean validateUserCreateParam(UserSaveData userSaveData) {
         String userId = userSaveData.getUserId();
@@ -65,18 +78,6 @@ public class UserRequestManager {
         if (userId == null || password == null || nickname == null || email == null) {
             return false;
         }
-
-        // 디코딩
-        try {
-            userId = URLDecoder.decode(userId, CHARSET);
-            password = URLDecoder.decode(password, CHARSET);
-            nickname = URLDecoder.decode(nickname, CHARSET);
-            email = URLDecoder.decode(email, CHARSET);
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage());
-            throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR);
-        }
-
 
         // 이메일 유효성 확인
         final String emailRegex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
