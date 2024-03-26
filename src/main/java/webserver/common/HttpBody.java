@@ -1,17 +1,17 @@
 package webserver.common;
 
 public class HttpBody {
-    private final String body;
+    private final byte[] body;
 
     public HttpBody() {
-        this.body = "";
+        this.body = null;
     }
 
-    public HttpBody(String body) {
+    public HttpBody(byte[] body) {
         this.body = body;
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return body;
     }
 }

@@ -45,7 +45,7 @@ class UserRequestManagerTest {
         HttpRequestLine requestLine = new HttpRequestLine("POST /user/create HTTP/1.1");
         HttpHeader httpHeader = new HttpHeader(RequestParser.parseHeader(
                 List.of("Content-Type: text/plain", "Content-Length: 65")));
-        HttpBody httpBody = new HttpBody("userId=hello&email=hello%40gmail.com&nickname=hello&password=1234");
+        HttpBody httpBody = new HttpBody("userId=hello&email=hello%40gmail.com&nickname=hello&password=1234".getBytes());
         HttpRequest httpRequest = new HttpRequest(requestLine, httpHeader, httpBody);
         HttpResponse httpResponse = userRequestManager.createUser(httpRequest);
 

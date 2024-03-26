@@ -5,6 +5,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -34,10 +35,10 @@ class RequestParserTest {
 
         String rightBodyFormat = "userId=hello&email=hello@gmail.com&nickname=hello&password=1234";
 
-        softAssertions.assertThatThrownBy(() -> RequestParser.parseBody(wrongBodyFormat))
+        softAssertions.assertThatThrownBy(() -> RequestParser.parseBody(wrongBodyFormat.getBytes()))
                 .isInstanceOf(MalformedBodyFormatException.class);
 
-        softAssertions.assertThat(RequestParser.parseBody(rightBodyFormat))
+        softAssertions.assertThat(RequestParser.parseBody(rightBodyFormat.getBytes()))
                 .isEqualTo(Map.of("userId", "hello", "email", "hello@gmail.com", "nickname", "hello", "password", "1234"));
 
         softAssertions.assertAll();

@@ -34,21 +34,17 @@ public class RequestParser {
         return headerMap;
     }
 
-    public static Map<String, String> parseBody(String body) {
-        if (body.isEmpty()) {
+    public static Map<String, String> parseBody(byte[] body) {
+        if (body == null) {
             throw new IllegalArgumentException("요청 바디가 존재하지 않습니다.");
         }
 
         try{
-            byte[] bytes = new byte[body.length()];
-            for (int i = 0; i < body.length(); i++) {
-                bytes[i] = (byte) body.charAt(i);
-            }
-            body = new String(bytes, CHARSET);
+            String bodyString = new String(body, CHARSET);
 
             Map<String, String> bodyMap = new HashMap<>();
 
-            for (String entry : body.split("&")) {
+            for (String entry : bodyString.split("&")) {
                 String[] keyValue = entry.split("=", 2);
                 String key = keyValue[0];
 

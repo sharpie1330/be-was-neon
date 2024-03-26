@@ -38,7 +38,7 @@ class RouteTest {
         HttpRequestLine dynamicRequestLine = new HttpRequestLine("GET /user/create HTTP/1.1");
         HttpHeader dynamicHttpHeader = new HttpHeader(RequestParser.parseHeader(
                 List.of("Content-Type: text/plain", "Content-Length: 65")));
-        HttpBody dynamicHttpBody = new HttpBody("userId=hello&email=hello@gmail.com&nickname=hello&password=1234");
+        HttpBody dynamicHttpBody = new HttpBody("userId=hello&email=hello@gmail.com&nickname=hello&password=1234".getBytes());
         wrongDynamicRequest = new HttpRequest(dynamicRequestLine, dynamicHttpHeader, dynamicHttpBody);
 
         HttpRequestLine staticRequestLine = new HttpRequestLine("GET /regis HTTP/1.1");

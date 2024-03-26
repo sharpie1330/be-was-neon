@@ -52,7 +52,13 @@ public class RequestHandler implements Runnable {
                 responseHandler.sendResponse(new CustomExceptionHandler().handleException(new TooLargeInputException()));
                 return;
             }
-            HttpBody httpBody = readBody(bis, contentLength);
+
+            HttpBody httpBody;
+            if (contentLength > 0) {
+                httpBody = readBody(bis, contentLength);
+            } else {
+                httpBody = new HttpBody();
+            }
 
             // HttpRequest
             HttpRequest httpRequest = new HttpRequest(httpRequestLine, httpHeader, httpBody);
@@ -113,17 +119,14 @@ public class RequestHandler implements Runnable {
      * @throws IOException
      */
     private HttpBody readBody(BufferedInputStream bis, int contentLength) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
+        byte[] body = new byte[contentLength];
         byte[] buffer = new byte[1024];
         int bytesRead;
         while (contentLength > 0L) {
             if((bytesRead = bis.read(buffer, 0, Math.min(buffer.length, contentLength))) == -1) break;
-            for (int i = 0; i < bytesRead; i++) {
-                stringBuilder.append((char) buffer[i]);
-            }
+            System.arraycopy(buffer, 0, body, 0, bytesRead);
             contentLength -= bytesRead;
         }
-
-        return new HttpBody(stringBuilder.toString());
+        return new HttpBody(body);
     }
 }

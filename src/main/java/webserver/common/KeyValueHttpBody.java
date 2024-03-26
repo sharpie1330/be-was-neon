@@ -15,7 +15,7 @@ public class KeyValueHttpBody {
     }
 
     public static KeyValueHttpBody of(HttpBody httpBody) {
-        return httpBody.getBody().isEmpty() ? new KeyValueHttpBody() : new KeyValueHttpBody(RequestParser.parseBody(httpBody.getBody()));
+        return httpBody.getBody() == null ? new KeyValueHttpBody() : new KeyValueHttpBody(RequestParser.parseBody(httpBody.getBody()));
     }
 
     public KeyValueHttpBody(Map<String, String> body) {
