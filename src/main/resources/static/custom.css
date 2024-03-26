@@ -9,6 +9,12 @@ h1 {
     font-weight: bold;
 }
 
+.red-text {
+    color: red;
+    font-size: 1rem;
+    margin-top: 20px;
+}
+
 .black-text {
     color: black;
     font-size: 1.2rem;
@@ -64,4 +70,12 @@ p {
     justify-content: center;
     align-items: center;
     height: 80vh;
+}
+
+.aStyle {
+    color: #007bff;
+    font-size: 0.9rem;
+    display: block;
+    line-height: 1.6;
+    margin-top: 20px;
 }
