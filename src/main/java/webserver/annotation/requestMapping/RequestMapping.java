@@ -1,4 +1,4 @@
-package webserver.route.requestMapping;
+package webserver.annotation.requestMapping;
 
 import webserver.type.HttpMethod;
 
