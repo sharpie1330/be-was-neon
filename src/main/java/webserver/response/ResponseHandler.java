@@ -1,8 +1,10 @@
 package webserver.response;
 
 import exception.CustomExceptionHandler;
+import exception.common.MethodNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.common.HttpHeader;
 import webserver.request.HttpRequest;
 import webserver.route.Route;
 
@@ -23,10 +25,16 @@ public class ResponseHandler {
 
     public void response(HttpRequest httpRequest) {
         try {
+            // requestLine 유효성 검사
+            if (!httpRequest.getRequestLine().isValid()) {
+                throw new MethodNotAllowedException();
+            }
+            logger.debug("request method : {}, request url : {}", httpRequest.getRequestLine().getHttpMethod(), httpRequest.getRequestLine().getURL());
+
             HttpResponse httpResponse = Route.getInstance().route(httpRequest);
             sendResponse(httpResponse);
         } catch (Exception e) {
-            sendResponse(customExceptionHandler.handleException(e, httpRequest));
+            sendResponse(customExceptionHandler.handleException(e));
         }
     }
 
@@ -35,15 +43,15 @@ public class ResponseHandler {
 
         try {
             String responseLine = httpResponse.getResponseLine();
-            Map<String, List<String>> headerMap = httpResponse.getHeaders();
+            HttpHeader httpHeader = httpResponse.getHeaders();
             byte[] body = httpResponse.getBody();
 
             // response line
             dos.writeBytes(responseLine);
 
             // header
-            if (headerMap != null) {
-                for (Map.Entry<String, List<String>> header : headerMap.entrySet()) {
+            if (httpHeader != null) {
+                for (Map.Entry<String, List<String>> header : httpHeader.entrySet()) {
                     dos.writeBytes(header.getKey() + ":" +
                             header.getValue().stream().reduce("", (x, y) -> x.isEmpty() ? y : x + ";" + y) +
                             NEW_LINE);

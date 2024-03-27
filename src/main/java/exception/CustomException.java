@@ -1,47 +1,59 @@
 package exception;
 
+import webserver.type.HttpStatusCode;
+
 public class CustomException extends RuntimeException{
-    private final CustomErrorType customErrorType;
-    private final int code;
+    private final HttpStatusCode httpStatusCode;
+    private final int errorCode;
     private final String errorMessage;
+    private final Exception cause;
 
-    public CustomException(CustomErrorType customErrorType) {
-        super(customErrorType.getErrorMessage());
-        this.customErrorType = customErrorType;
-        this.code = customErrorType.getCode();
-        this.errorMessage = customErrorType.getErrorMessage();
+    public CustomException(HttpStatusCode httpStatusCode) {
+        ExceptionType exceptionType = ExceptionType.from(this.getClass());
+        this.httpStatusCode = httpStatusCode;
+        this.errorCode = exceptionType.getErrorCode();
+        this.errorMessage = exceptionType.getErrorMessage();
+        this.cause = null;
     }
 
-    public CustomException(CustomErrorType customErrorType, String errorMessage) {
-        super(errorMessage);
-        this.customErrorType = customErrorType;
-        this.code = customErrorType.getCode();
+    public CustomException(HttpStatusCode httpStatusCode, String errorMessage) {
+        ExceptionType exceptionType = ExceptionType.from(this.getClass());
+        this.httpStatusCode = httpStatusCode;
+        this.errorCode = exceptionType.getErrorCode();
         this.errorMessage = errorMessage;
+        this.cause = null;
     }
 
-    public CustomException(CustomErrorType customErrorType, Exception cause) {
-        super(customErrorType.getErrorMessage(), cause);
-        this.customErrorType = customErrorType;
-        this.code = customErrorType.getCode();
-        this.errorMessage = customErrorType.getErrorMessage();
+    public CustomException(HttpStatusCode httpStatusCode, Exception cause) {
+        ExceptionType exceptionType = ExceptionType.from(this.getClass());
+        this.httpStatusCode = httpStatusCode;
+        this.errorCode = exceptionType.getErrorCode();
+        this.errorMessage = exceptionType.getErrorMessage();
+        this.cause = cause;
     }
 
-    public CustomException(CustomErrorType customErrorType, int code, String errorMessage) {
-        super(customErrorType.getErrorMessage());
-        this.customErrorType = customErrorType;
-        this.code = code;
+    public CustomException(HttpStatusCode httpStatusCode, String errorMessage, Exception cause) {
+        ExceptionType exceptionType = ExceptionType.from(this.getClass());
+        this.httpStatusCode = httpStatusCode;
+        this.errorCode = exceptionType.getErrorCode();
         this.errorMessage = errorMessage;
+        this.cause = cause;
+    }
+
+    public HttpStatusCode getHttpStatusCode() {
+        return httpStatusCode;
     }
 
     public String getErrorMessage() {
         return errorMessage;
     }
 
-    public int getCode() {
-        return code;
+    public int getErrorCode() {
+        return errorCode;
     }
 
-    public CustomErrorType getCustomErrorType() {
-        return customErrorType;
+    @Override
+    public Throwable getCause() {
+        return cause;
     }
 }

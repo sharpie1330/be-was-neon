@@ -58,8 +58,12 @@ public class HttpResponse {
         return ok(version).body(body);
     }
 
-    public static Builder created(String version, String location) {
-        return new ResponseBuilder(version, HttpStatusCode.CREATED).location(location);
+    public static Builder created(String version) {
+        return new ResponseBuilder(version, HttpStatusCode.CREATED);
+    }
+
+    public static Builder found(String version, String location) {
+        return new ResponseBuilder(version, HttpStatusCode.FOUND).location(location);
     }
 
     public static Builder badRequest(String version) {
@@ -93,19 +97,19 @@ public class HttpResponse {
 
         @Override
         public ResponseBuilder header(String headerName, String... headerValues) {
-            headers.addAll(headerName, List.of(headerValues));
+            headers.addAll(headerName, Arrays.stream(headerValues).toList());
             return this;
         }
 
         @Override
-        public ResponseBuilder headers(HttpHeader headers) {
+        public ResponseBuilder headers(Map<String, List<String>> headers) {
             this.headers.addAll(headers);
 
             return this;
         }
 
         @Override
-        public ResponseBuilder contentLength(long contentLength) {
+        public ResponseBuilder contentLength(int contentLength) {
             headers.setContentLength(contentLength);
             return this;
         }
@@ -136,9 +140,9 @@ public class HttpResponse {
     public interface Builder{
         Builder header(String headerName, String... headerValues);
 
-        Builder headers(HttpHeader headers);
+        Builder headers(Map<String, List<String>> headers);
 
-        Builder contentLength(long contentLength);
+        Builder contentLength(int contentLength);
 
         Builder contentType(MIMEType mimeType);
 
