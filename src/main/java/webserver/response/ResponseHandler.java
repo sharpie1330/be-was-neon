@@ -26,7 +26,7 @@ public class ResponseHandler {
     public void response(HttpRequest httpRequest) {
         try {
             // requestLine 유효성 검사
-            if (!httpRequest.getRequestLine().isValid()) {
+            if (httpRequest.getRequestLine().isNotValid()) {
                 throw new MethodNotAllowedException();
             }
             logger.debug("request method : {}, request url : {}", httpRequest.getRequestLine().getHttpMethod(), httpRequest.getRequestLine().getURL());

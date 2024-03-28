@@ -10,6 +10,7 @@ public class HttpRequestLine {
     public HttpRequestLine(String requestLine) {
         String[] split = requestLine.split(" ");
 
+        // TODO: MethodNotAllowedException
         if (split.length == 3) {
             this.httpMethod = HttpMethod.get(split[0]);
             this.URL = split[1];
@@ -29,11 +30,7 @@ public class HttpRequestLine {
         return version;
     }
 
-    public boolean isValid() {
-        if (httpMethod != null && version != null) {
-            return version.toUpperCase().contains("HTTP");
-        }
-
-        return false;
+    public boolean isNotValid() {
+        return httpMethod == null || version == null || !version.toUpperCase().contains("HTTP");
     }
 }
