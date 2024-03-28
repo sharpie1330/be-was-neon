@@ -1,6 +1,6 @@
 package webserver.utils;
 
-import webserver.exception.server.MalformedUrlFormatException;
+import webserver.exception.request.MalformedUrlFormatException;
 
 import java.util.HashMap;
 import java.util.Map;

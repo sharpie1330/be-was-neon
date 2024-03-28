@@ -1,7 +1,7 @@
 package webserver.utils;
 
 import webserver.exception.common.InternalServerErrorException;
-import webserver.exception.server.MalformedBodyFormatException;
+import webserver.exception.request.MalformedBodyFormatException;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

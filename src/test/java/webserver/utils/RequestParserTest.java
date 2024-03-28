@@ -1,6 +1,6 @@
 package webserver.utils;
 
-import webserver.exception.server.MalformedBodyFormatException;
+import webserver.exception.request.MalformedBodyFormatException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

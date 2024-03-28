@@ -3,7 +3,7 @@ package webserver.route.router;
 import webserver.exception.HttpRequestException;
 import webserver.exception.common.InternalServerErrorException;
 import webserver.exception.common.MethodNotAllowedException;
-import webserver.exception.server.PathNotFoundException;
+import webserver.exception.request.PathNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
