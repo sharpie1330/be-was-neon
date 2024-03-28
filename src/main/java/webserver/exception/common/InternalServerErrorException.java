@@ -1,6 +1,6 @@
-package exception.common;
+package webserver.exception.common;
 
-import exception.ApplicationException;
+import webserver.exception.ApplicationException;
 import webserver.type.HttpStatusCode;
 
 public class InternalServerErrorException extends ApplicationException {

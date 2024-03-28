@@ -1,9 +1,10 @@
 package exception;
 
-import exception.common.BadRequestException;
-import exception.common.InternalServerErrorException;
-import exception.common.MethodNotAllowedException;
-import exception.common.NotFoundException;
+import webserver.exception.HttpRequestException;
+import webserver.exception.common.BadRequestException;
+import webserver.exception.common.InternalServerErrorException;
+import webserver.exception.common.MethodNotAllowedException;
+import webserver.exception.common.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.response.HttpResponse;

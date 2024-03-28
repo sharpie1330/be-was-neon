@@ -1,6 +1,6 @@
-package exception.common;
+package webserver.exception.common;
 
-import exception.HttpRequestException;
+import webserver.exception.HttpRequestException;
 import webserver.type.HttpStatusCode;
 
 public class MethodNotAllowedException extends HttpRequestException {

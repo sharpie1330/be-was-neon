@@ -1,9 +1,9 @@
 package webserver.route.router;
 
-import exception.HttpRequestException;
-import exception.common.InternalServerErrorException;
-import exception.common.MethodNotAllowedException;
-import exception.server.PathNotFoundException;
+import webserver.exception.HttpRequestException;
+import webserver.exception.common.InternalServerErrorException;
+import webserver.exception.common.MethodNotAllowedException;
+import webserver.exception.server.PathNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
@@ -12,7 +12,6 @@ import webserver.annotation.requestMapping.RequestMapping;
 import webserver.annotation.requestMapping.RequestMappingFinder;
 import webserver.route.user.requestManager.UserRequestManager;
 import webserver.type.HttpMethod;
-import webserver.type.HttpStatusCode;
 import webserver.utils.URLUtils;
 
 import java.lang.reflect.InvocationTargetException;

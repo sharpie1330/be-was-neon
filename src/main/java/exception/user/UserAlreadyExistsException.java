@@ -1,6 +1,6 @@
 package exception.user;
 
-import exception.common.ConflictException;
+import webserver.exception.common.ConflictException;
 
 public class UserAlreadyExistsException extends ConflictException {
     public UserAlreadyExistsException() {

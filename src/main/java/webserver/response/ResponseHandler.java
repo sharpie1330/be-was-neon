@@ -1,7 +1,7 @@
 package webserver.response;
 
 import exception.CustomExceptionHandler;
-import exception.common.MethodNotAllowedException;
+import webserver.exception.common.MethodNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.HttpHeader;

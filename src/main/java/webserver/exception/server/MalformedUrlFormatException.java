@@ -1,6 +1,6 @@
-package exception.server;
+package webserver.exception.server;
 
-import exception.common.BadRequestException;
+import webserver.exception.common.BadRequestException;
 
 public class MalformedUrlFormatException extends BadRequestException {
     public MalformedUrlFormatException() {

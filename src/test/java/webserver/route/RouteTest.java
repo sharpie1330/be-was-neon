@@ -1,7 +1,7 @@
 package webserver.route;
 
 import db.Database;
-import exception.server.PathNotFoundException;
+import webserver.exception.server.PathNotFoundException;
 import model.User;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterEach;

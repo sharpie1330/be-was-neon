@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exception.CustomExceptionHandler;
-import exception.server.TooLargeInputException;
+import webserver.exception.server.TooLargeInputException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.HttpBody;
