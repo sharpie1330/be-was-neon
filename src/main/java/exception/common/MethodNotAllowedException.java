@@ -1,12 +1,12 @@
 package exception.common;
 
-import exception.CustomException;
+import exception.HttpRequestException;
 import webserver.type.HttpStatusCode;
 
-public class MethodNotAllowedException extends CustomException {
+public class MethodNotAllowedException extends HttpRequestException {
 
     public MethodNotAllowedException() {
-        super(HttpStatusCode.METHOD_NOT_ALLOWED);
+        super(HttpStatusCode.METHOD_NOT_ALLOWED, HttpStatusCode.METHOD_NOT_ALLOWED.getMessage());
     }
 
     public MethodNotAllowedException(String errorMessage) {

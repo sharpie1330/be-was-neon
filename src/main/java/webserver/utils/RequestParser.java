@@ -1,8 +1,7 @@
 package webserver.utils;
 
-import exception.CustomException;
+import exception.common.InternalServerErrorException;
 import exception.server.MalformedBodyFormatException;
-import webserver.type.HttpStatusCode;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -58,7 +57,7 @@ public class RequestParser {
 
             return bodyMap;
         } catch (UnsupportedEncodingException e) {
-            throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR, e);
+            throw new InternalServerErrorException(e.getMessage(), e);
         }
     }
 }

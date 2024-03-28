@@ -1,11 +1,11 @@
 package exception.common;
 
-import exception.CustomException;
+import exception.ApplicationException;
 import webserver.type.HttpStatusCode;
 
-public class ConflictException extends CustomException {
+public class ConflictException extends ApplicationException {
     public ConflictException() {
-        super(HttpStatusCode.CONFLICT);
+        super(HttpStatusCode.CONFLICT, HttpStatusCode.CONFLICT.getMessage());
     }
 
     public ConflictException(String errorMessage) {

@@ -1,6 +1,7 @@
 package exception;
 
 import exception.common.BadRequestException;
+import exception.common.InternalServerErrorException;
 import exception.common.MethodNotAllowedException;
 import exception.common.NotFoundException;
 import org.slf4j.Logger;
@@ -34,15 +35,15 @@ public class CustomExceptionHandler {
         if (e instanceof MethodNotAllowedException me) {
             return handleMethodNotAllowedException(me);
         }
-        if (e instanceof CustomException ce) {
+        if (e instanceof HttpRequestException ce) {
             return handleCustomException(ce);
         }
         return handleOtherException(e);
     }
 
     private HttpResponse handleNotFoundException(NotFoundException ne) {
-        logger.error("[NotFoundException] errorCode : {} | errorMessage : {} | cause Exception : {}",
-                ne.getErrorCode(), ne.getErrorMessage(), getExceptionStackTrace(ne));
+        logger.error("[NotFoundException] errorMessage : {} | cause Exception : {}",
+                ne.getErrorMessage(), getExceptionStackTrace(ne));
 
         return HttpResponse
                 .status("HTTP/1.1", HttpStatusCode.FOUND)
@@ -51,8 +52,8 @@ public class CustomExceptionHandler {
     }
 
     private HttpResponse handleBadRequestException(BadRequestException be) {
-        logger.error("[BadRequestException] errorCode : {} | errorMessage : {} | cause Exception : {}",
-                be.getErrorCode(), be.getErrorMessage(), getExceptionStackTrace(be));
+        logger.error("[BadRequestException] errorMessage : {} | cause Exception : {}",
+                be.getErrorMessage(), getExceptionStackTrace(be));
 
         return HttpResponse
                 .status("HTTP/1.1", HttpStatusCode.FOUND)
@@ -61,8 +62,8 @@ public class CustomExceptionHandler {
     }
 
     private HttpResponse handleMethodNotAllowedException(MethodNotAllowedException me) {
-        logger.error("[MethodNotAllowedException] errorCode : {} | errorMessage : {} | cause Exception : {}",
-                me.getErrorCode(), me.getErrorMessage(), getExceptionStackTrace(me));
+        logger.error("[MethodNotAllowedException] errorMessage : {} | cause Exception : {}",
+                me.getErrorMessage(), getExceptionStackTrace(me));
 
         return HttpResponse
                 .status("HTTP/1.1", HttpStatusCode.FOUND)
@@ -70,9 +71,9 @@ public class CustomExceptionHandler {
                 .build();
     }
 
-    private HttpResponse handleCustomException(CustomException ce) {
-        logger.error("[CustomException] errorCode : {} | errorMessage : {} | cause Exception : {}",
-                ce.getErrorCode(), ce.getErrorMessage(), getExceptionStackTrace(ce));
+    private HttpResponse handleCustomException(HttpRequestException ce) {
+        logger.error("[CustomException] errorMessage : {} | cause Exception : {}",
+                ce.getErrorMessage(), getExceptionStackTrace(ce));
 
         byte[] jsonBody = createJsonBody(ce);
 
@@ -93,23 +94,20 @@ public class CustomExceptionHandler {
                 .build();
     }
 
-    private byte[] createJsonBody(CustomException customException) {
+    private byte[] createJsonBody(HttpRequestException httpRequestException) {
         String json = String.format(
                 """
                         {
-                            "errorCode":"%s",
                             "errorMessage":"%s"
                         }
                         """,
-                customException.getErrorCode(),
-                customException.getErrorMessage()
+                httpRequestException.getErrorMessage()
         );
 
         try {
             return json.getBytes(CHARSET);
         } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage());
-            throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR);
+            throw new InternalServerErrorException(e.getMessage(), e);
         }
     }
 

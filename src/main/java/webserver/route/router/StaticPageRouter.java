@@ -1,10 +1,9 @@
 package webserver.route.router;
 
-import exception.CustomException;
+import exception.common.InternalServerErrorException;
 import exception.server.PathNotFoundException;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
-import webserver.type.HttpStatusCode;
 import webserver.type.MIMEType;
 import webserver.utils.URLUtils;
 
@@ -39,7 +38,7 @@ public class StaticPageRouter {
         } catch (FileNotFoundException e) {
             throw new PathNotFoundException();
         } catch (IOException e) {
-            throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR, e);
+            throw new InternalServerErrorException(e.getMessage(), e);
         }
     }
 }

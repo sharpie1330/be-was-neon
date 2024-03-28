@@ -1,7 +1,7 @@
 package webserver.route.user.requestManager;
 
-import exception.CustomException;
 import exception.common.BadRequestException;
+import exception.common.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.KeyValueHttpBody;
@@ -62,8 +62,7 @@ public class UserRequestManager {
             String email = URLDecoder.decode(body.get("email"), CHARSET);
             return new UserSaveData(userId, password, nickname, email);
         } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage());
-            throw new CustomException(HttpStatusCode.INTERNAL_SERVER_ERROR);
+            throw new InternalServerErrorException(e.getMessage(), e);
         }
     }
 
