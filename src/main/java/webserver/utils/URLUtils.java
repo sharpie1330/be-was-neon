@@ -5,13 +5,9 @@ import webserver.exception.request.MalformedUrlFormatException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static webserver.utils.Delimiter.*;
+
 public class URLUtils {
-    private static final String DOT = ".";
-    private static final String SLASH = "/";
-    private static final String EMPTY_STRING = "";
-    private static final String AMPERSAND = "&";
-    private static final String EQUAL = "=";
-    private static final String QUESTION_MARK = "?";
 
     public static String getExtension(String fileName) {
         int dotIndex = fileName.lastIndexOf(DOT);

@@ -1,6 +1,7 @@
 package webserver.common;
 
 import webserver.type.HttpMethod;
+import webserver.utils.Delimiter;
 
 public class HttpRequestLine {
     private HttpMethod httpMethod;
@@ -8,7 +9,7 @@ public class HttpRequestLine {
     private String version;
 
     public HttpRequestLine(String requestLine) {
-        String[] split = requestLine.split(" ");
+        String[] split = requestLine.split(Delimiter.SPACE);
 
         // TODO: MethodNotAllowedException
         if (split.length == 3) {

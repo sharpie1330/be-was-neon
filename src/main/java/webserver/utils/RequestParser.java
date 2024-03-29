@@ -21,10 +21,10 @@ public class RequestParser {
         Map<String, List<String>> headerMap = new HashMap<>();
 
         for (String headerLine : requestHeader) {
-            String[] keyValue = headerLine.split(":", 2);
+            String[] keyValue = headerLine.split(Delimiter.COLON, 2);
             String headerKey = keyValue[0].trim();
             List<String> headerValues = new ArrayList<>();
-            for (String headerValue : keyValue[1].split(";")) {
+            for (String headerValue : keyValue[1].split(Delimiter.SEMICOLON)) {
                 headerValues.add(headerValue.trim());
             }
             headerMap.put(headerKey, headerValues);
@@ -43,8 +43,8 @@ public class RequestParser {
 
             Map<String, String> bodyMap = new HashMap<>();
 
-            for (String entry : bodyString.split("&")) {
-                String[] keyValue = entry.split("=", 2);
+            for (String entry : bodyString.split(Delimiter.AMPERSAND)) {
+                String[] keyValue = entry.split(Delimiter.EQUAL, 2);
                 String key = keyValue[0];
 
                 if (keyValue.length != 2 || key.isBlank()) {

@@ -5,6 +5,7 @@ import webserver.response.HttpResponse;
 import webserver.route.router.DynamicPageRouter;
 import webserver.route.router.StaticPageRouter;
 import webserver.type.HttpMethod;
+import webserver.utils.Delimiter;
 import webserver.utils.PropertyUtils;
 import webserver.utils.URLUtils;
 
@@ -65,7 +66,7 @@ public class Router {
         }
 
         return STATIC_SOURCE_PATH.concat(path)
-                .concat("/")    // 구분자
+                .concat(Delimiter.SLASH)    // 구분자
                 .concat(STATIC_MAPPING.get(requestPath));
     }
 

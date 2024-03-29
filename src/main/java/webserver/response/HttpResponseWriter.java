@@ -10,6 +10,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import static webserver.utils.Delimiter.*;
+
 public class HttpResponseWriter {
     private static final Logger logger = LoggerFactory.getLogger(HttpResponseWriter.class);
 
@@ -20,8 +22,6 @@ public class HttpResponseWriter {
     }
 
     public void sendResponse(HttpResponse httpResponse) {
-        final String NEW_LINE = "\r\n";
-
         try {
             String responseLine = httpResponse.getResponseLine();
             HttpHeader httpHeader = httpResponse.getHeaders();
@@ -33,8 +33,8 @@ public class HttpResponseWriter {
             // header
             if (httpHeader != null) {
                 for (Map.Entry<String, List<String>> header : httpHeader.entrySet()) {
-                    dos.writeBytes(header.getKey() + ":" +
-                            header.getValue().stream().reduce("", (x, y) -> x.isEmpty() ? y : x + ";" + y) +
+                    dos.writeBytes(header.getKey() + COLON +
+                            header.getValue().stream().reduce("", (x, y) -> x.isEmpty() ? y : x + SEMICOLON + y) +
                             NEW_LINE);
                 }
             }
