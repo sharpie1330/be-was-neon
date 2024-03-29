@@ -13,38 +13,38 @@ import webserver.route.Router;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.util.List;
 
 public class WebApplicationServer implements Runnable{
     private static final Logger logger = LoggerFactory.getLogger(WebApplicationServer.class);
 
-    private final InputStream in;
-    private final OutputStream out;
+    private final Socket connection;
 
     private final List<Class<?>> controllers;
     private final ExceptionHandler exceptionHandler;
 
-    public WebApplicationServer(InputStream in, OutputStream out, List<Class<?>> controllers, ExceptionHandler exceptionHandler) {
-        this.in = in;
-        this.out = out;
+    public WebApplicationServer(Socket connectionSocket, List<Class<?>> controllers, ExceptionHandler exceptionHandler) {
+        this.connection = connectionSocket;
         this.controllers = controllers;
         this.exceptionHandler = exceptionHandler != null ? exceptionHandler : new DefaultExceptionHandler();
     }
 
     @Override
     public void run() {
-        try (in; out) {
-            runServer();
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+            HttpRequestReader httpRequestReader = new HttpRequestReader(in);
+            HttpResponseWriter httpResponseWriter = new HttpResponseWriter(out);
+            Router router = new Router(controllers);
+
+            runServer(httpRequestReader, httpResponseWriter, router);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void runServer() {
-        HttpRequestReader httpRequestReader = new HttpRequestReader(in);
-        HttpResponseWriter httpResponseWriter = new HttpResponseWriter(out);
-        Router router = new Router(controllers);
-
+    private void runServer(HttpRequestReader httpRequestReader, HttpResponseWriter httpResponseWriter, Router router) {
         try {
             HttpRequest httpRequest = httpRequestReader.parseInputStream();
             HttpResponse httpResponse = router.route(httpRequest);

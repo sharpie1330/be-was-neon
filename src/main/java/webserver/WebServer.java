@@ -1,3 +1,29 @@
+// ascii art provided by : https://github.com/ben-yip/grunt-buddha-bless
+//
+//
+//                   _ooOoo_
+//                  o8888888o
+//                  88" . "88
+//                  (| -_- |)
+//                  O\  =  /O
+//               ____/`---'\____
+//             .'  \\|     |//  `.
+//            /  \\|||  :  |||//  \
+//           /  _||||| -:- |||||-  \
+//           |   | \\\  -  /// |   |
+//           | \_|  ''\---/''  |   |
+//           \  .-\__  `-`  ___/-. /
+//         ___`. .'  /--.--\  `. . __
+//      ."" '<  `.___\_<|>_/___.'  >'"".
+//     | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+//     \  \ `-.   \_ __\ /__ _/   .-` /  /
+//======`-.____`-.___\_____/___.-`____.-'======
+//                   `=---='
+//
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//          佛祖保佑           永无BUG
+//         God Bless        Never Crash
+
 package webserver;
 
 import java.net.ServerSocket;
@@ -45,7 +71,7 @@ public class WebServer {
             while ((connection = listenSocket.accept()) != null) {
                 executorService.execute(
                         new WebApplicationServer(
-                                connection.getInputStream(), connection.getOutputStream(), controllers, exceptionHandler
+                                connection, controllers, exceptionHandler
                         )
                 );
             }
