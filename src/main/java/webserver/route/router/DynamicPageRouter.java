@@ -4,13 +4,10 @@ import webserver.exception.common.ServerException;
 import webserver.exception.server.InternalServerErrorException;
 import webserver.exception.server.MethodNotAllowedException;
 import webserver.exception.request.PathNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.annotation.requestMapping.RequestMapping;
 import webserver.annotation.requestMapping.RequestMappingFinder;
-import webserver.route.user.requestManager.UserRequestManager;
 import webserver.type.HttpMethod;
 import webserver.utils.URLUtils;
 
@@ -21,27 +18,19 @@ import java.util.List;
 import java.util.Map;
 
 public class DynamicPageRouter {
-    private static final Logger logger = LoggerFactory.getLogger(DynamicPageRouter.class);
-
-    private static final List<Class<?>> RequestManagerClasses =
-            List.of(UserRequestManager.class);
+    private final List<Class<?>> controllers;
 
     private static final Map<String, RequestMappingFinder> REQUEST_MAPPING_MAP = new HashMap<>();
 
-    private static final DynamicPageRouter instance = new DynamicPageRouter();
-
-    private DynamicPageRouter() {
+    public DynamicPageRouter(List<Class<?>> controllers) {
+        this.controllers = controllers;
         init();
-    }
-
-    public static DynamicPageRouter getInstance() {
-        return instance;
     }
 
     // java reflection 활용, 요청 url path와 메서드 매칭
     private void init() {
         // RequestManager 클래스들에 대해서만
-        for (Class<?> clazz : RequestManagerClasses) {
+        for (Class<?> clazz : controllers) {
             RequestMappingFinder requestMappingFinder = new RequestMappingFinder(clazz);
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {

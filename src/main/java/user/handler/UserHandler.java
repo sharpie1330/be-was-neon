@@ -1,11 +1,11 @@
-package webserver.route.user.handler;
+package user.handler;
 
 import db.Database;
 import exception.user.UserAlreadyExistsException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.route.user.data.UserSaveData;
+import user.data.UserSaveData;
 
 public class UserHandler {
     private static final Logger logger = LoggerFactory.getLogger(UserHandler.class);

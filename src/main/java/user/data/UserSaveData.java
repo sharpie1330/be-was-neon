@@ -1,4 +1,4 @@
-package webserver.route.user.data;
+package user.data;
 
 import model.User;
 

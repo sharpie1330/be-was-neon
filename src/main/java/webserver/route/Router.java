@@ -8,11 +8,12 @@ import webserver.type.HttpMethod;
 import webserver.utils.PropertyUtils;
 import webserver.utils.URLUtils;
 
+import java.util.List;
 import java.util.Map;
 
 import static webserver.utils.PropertyUtils.loadStaticSourcePathFromProperties;
 
-public class Route {
+public class Router {
     private static final String STATIC_SOURCE_PATH = loadStaticSourcePathFromProperties();
     private static final String DEFAULT_HTML = PropertyUtils.loadProperties().getProperty("defaultHtml");
     private static final String ERROR_404_HTML = PropertyUtils.loadProperties().getProperty("error404Html");
@@ -26,18 +27,12 @@ public class Route {
             "default", ERROR_404_HTML
     );
 
-    private static final Route instance = new Route();
-
     private final StaticPageRouter staticPageRouter;
     private final DynamicPageRouter dynamicPageRouter;
 
-    private Route() {
-        dynamicPageRouter = DynamicPageRouter.getInstance();
-        staticPageRouter = StaticPageRouter.getInstance();
-    }
-
-    public static Route getInstance() {
-        return instance;
+    public Router(List<Class<?>> controllers) {
+        this.dynamicPageRouter = new DynamicPageRouter(controllers);
+        this.staticPageRouter = new StaticPageRouter();
     }
 
     public HttpResponse route(HttpRequest httpRequest) throws Exception{

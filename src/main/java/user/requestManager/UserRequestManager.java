@@ -1,5 +1,6 @@
-package webserver.route.user.requestManager;
+package user.requestManager;
 
+import user.data.UserSaveData;
 import webserver.exception.server.BadRequestException;
 import webserver.exception.server.InternalServerErrorException;
 import org.slf4j.Logger;
@@ -8,8 +9,7 @@ import webserver.common.KeyValueHttpBody;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.annotation.requestMapping.RequestMapping;
-import webserver.route.user.data.UserSaveData;
-import webserver.route.user.handler.UserHandler;
+import user.handler.UserHandler;
 import webserver.type.HttpMethod;
 
 import java.io.UnsupportedEncodingException;

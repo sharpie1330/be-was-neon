@@ -13,14 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class StaticPageRouter {
-    private static final StaticPageRouter instance = new StaticPageRouter();
+    public StaticPageRouter() {
 
-    private StaticPageRouter() {
-
-    }
-
-    public static StaticPageRouter getInstance() {
-        return instance;
     }
 
     public HttpResponse routeStaticPage(HttpRequest httpRequest, String filePath) {

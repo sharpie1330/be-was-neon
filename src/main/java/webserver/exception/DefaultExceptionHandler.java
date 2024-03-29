@@ -1,15 +1,13 @@
-package exception;
+package webserver.exception;
 
-import webserver.exception.ExceptionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webserver.exception.common.ServerException;
 import webserver.exception.server.BadRequestException;
 import webserver.exception.server.InternalServerErrorException;
 import webserver.exception.server.MethodNotAllowedException;
 import webserver.exception.server.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import webserver.response.HttpResponse;
-import webserver.response.ResponseHandler;
 import webserver.type.HttpStatusCode;
 import webserver.type.MIMEType;
 
@@ -19,11 +17,11 @@ import java.io.UnsupportedEncodingException;
 
 import static webserver.utils.PropertyUtils.loadProperties;
 
-public class CustomExceptionHandler implements ExceptionHandler {
-    private static final Logger logger = LoggerFactory.getLogger(ResponseHandler.class);
+public class DefaultExceptionHandler implements ExceptionHandler{
+    private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
     private static final String CHARSET = loadProperties().getProperty("charset");
 
-    public CustomExceptionHandler() {
+    public DefaultExceptionHandler() {
 
     }
 
