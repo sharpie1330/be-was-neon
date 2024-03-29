@@ -1,10 +1,11 @@
 package exception;
 
-import webserver.exception.HttpRequestException;
-import webserver.exception.common.BadRequestException;
-import webserver.exception.common.InternalServerErrorException;
-import webserver.exception.common.MethodNotAllowedException;
-import webserver.exception.common.NotFoundException;
+import webserver.exception.ExceptionHandler;
+import webserver.exception.common.ServerException;
+import webserver.exception.server.BadRequestException;
+import webserver.exception.server.InternalServerErrorException;
+import webserver.exception.server.MethodNotAllowedException;
+import webserver.exception.server.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.response.HttpResponse;
@@ -18,7 +19,7 @@ import java.io.UnsupportedEncodingException;
 
 import static webserver.utils.PropertyUtils.loadProperties;
 
-public class CustomExceptionHandler {
+public class CustomExceptionHandler implements ExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(ResponseHandler.class);
     private static final String CHARSET = loadProperties().getProperty("charset");
 
@@ -26,6 +27,7 @@ public class CustomExceptionHandler {
 
     }
 
+    @Override
     public HttpResponse handleException(Exception e) {
         if (e instanceof NotFoundException ne) {
             return handleNotFoundException(ne);
@@ -36,7 +38,7 @@ public class CustomExceptionHandler {
         if (e instanceof MethodNotAllowedException me) {
             return handleMethodNotAllowedException(me);
         }
-        if (e instanceof HttpRequestException ce) {
+        if (e instanceof ServerException ce) {
             return handleCustomException(ce);
         }
         return handleOtherException(e);
@@ -72,7 +74,7 @@ public class CustomExceptionHandler {
                 .build();
     }
 
-    private HttpResponse handleCustomException(HttpRequestException ce) {
+    private HttpResponse handleCustomException(ServerException ce) {
         logger.error("[CustomException] errorMessage : {} | cause Exception : {}",
                 ce.getErrorMessage(), getExceptionStackTrace(ce));
 
@@ -95,14 +97,14 @@ public class CustomExceptionHandler {
                 .build();
     }
 
-    private byte[] createJsonBody(HttpRequestException httpRequestException) {
+    private byte[] createJsonBody(ServerException serverException) {
         String json = String.format(
                 """
                         {
                             "errorMessage":"%s"
                         }
                         """,
-                httpRequestException.getErrorMessage()
+                serverException.getErrorMessage()
         );
 
         try {

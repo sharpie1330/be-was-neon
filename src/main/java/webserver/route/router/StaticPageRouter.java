@@ -1,6 +1,6 @@
 package webserver.route.router;
 
-import webserver.exception.common.InternalServerErrorException;
+import webserver.exception.server.InternalServerErrorException;
 import webserver.exception.request.PathNotFoundException;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;

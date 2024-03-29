@@ -1,6 +1,6 @@
 package webserver.exception.request;
 
-import webserver.exception.common.BadRequestException;
+import webserver.exception.server.BadRequestException;
 
 public class MalformedBodyFormatException extends BadRequestException {
     public MalformedBodyFormatException() {

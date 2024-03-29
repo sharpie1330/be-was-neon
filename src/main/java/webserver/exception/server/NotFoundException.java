@@ -1,6 +1,6 @@
-package webserver.exception.common;
+package webserver.exception.server;
 
-import webserver.exception.ApplicationException;
+import webserver.exception.common.ApplicationException;
 import webserver.type.HttpStatusCode;
 
 public class NotFoundException extends ApplicationException {

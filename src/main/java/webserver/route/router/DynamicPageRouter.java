@@ -1,8 +1,8 @@
 package webserver.route.router;
 
-import webserver.exception.HttpRequestException;
-import webserver.exception.common.InternalServerErrorException;
-import webserver.exception.common.MethodNotAllowedException;
+import webserver.exception.common.ServerException;
+import webserver.exception.server.InternalServerErrorException;
+import webserver.exception.server.MethodNotAllowedException;
 import webserver.exception.request.PathNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,8 +92,8 @@ public class DynamicPageRouter {
                 throw new MethodNotAllowedException();
             } catch (InvocationTargetException e) {
                 Throwable targetException = e.getTargetException();
-                if (targetException instanceof HttpRequestException) {
-                    throw (HttpRequestException) targetException;
+                if (targetException instanceof ServerException) {
+                    throw (ServerException) targetException;
                 }
                 throw (Exception) targetException;
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {

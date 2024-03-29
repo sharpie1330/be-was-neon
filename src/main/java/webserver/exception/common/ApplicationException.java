@@ -1,4 +1,4 @@
-package webserver.exception;
+package webserver.exception.common;
 
 import webserver.type.HttpStatusCode;
 

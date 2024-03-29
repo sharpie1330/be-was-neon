@@ -1,6 +1,6 @@
 package webserver.utils;
 
-import webserver.exception.common.InternalServerErrorException;
+import webserver.exception.server.InternalServerErrorException;
 import webserver.exception.request.MalformedBodyFormatException;
 
 import java.io.UnsupportedEncodingException;

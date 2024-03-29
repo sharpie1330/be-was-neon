@@ -1,9 +1,9 @@
-package webserver.exception.common;
+package webserver.exception.server;
 
-import webserver.exception.HttpRequestException;
+import webserver.exception.common.ServerException;
 import webserver.type.HttpStatusCode;
 
-public class MethodNotAllowedException extends HttpRequestException {
+public class MethodNotAllowedException extends ServerException {
 
     public MethodNotAllowedException() {
         super(HttpStatusCode.METHOD_NOT_ALLOWED, HttpStatusCode.METHOD_NOT_ALLOWED.getMessage());

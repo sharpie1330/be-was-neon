@@ -1,6 +1,6 @@
 package webserver.exception.request;
 
-import webserver.exception.common.NotFoundException;
+import webserver.exception.server.NotFoundException;
 
 public class PathNotFoundException extends NotFoundException {
     public PathNotFoundException() {

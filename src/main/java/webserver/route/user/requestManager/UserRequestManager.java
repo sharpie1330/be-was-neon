@@ -1,7 +1,7 @@
 package webserver.route.user.requestManager;
 
-import webserver.exception.common.BadRequestException;
-import webserver.exception.common.InternalServerErrorException;
+import webserver.exception.server.BadRequestException;
+import webserver.exception.server.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.KeyValueHttpBody;
