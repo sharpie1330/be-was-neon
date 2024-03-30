@@ -3,15 +3,21 @@ package webserver.request;
 import webserver.common.HttpBody;
 import webserver.common.HttpHeader;
 import webserver.common.HttpRequestLine;
+import webserver.exception.request.InvalidHttpVersionException;
+import webserver.exception.request.InvalidRequestLineFormatException;
+import webserver.exception.request.TooLargeInputException;
+import webserver.exception.server.MethodNotAllowedException;
+import webserver.type.HttpMethod;
+import webserver.utils.Delimiter;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TooManyListenersException;
 
 public class HttpRequestReader {
+    private static final String HTTP_VERSION = "HTTP/1.1";  // 1.1만 지원
 
     private final BufferedInputStream bis;
 
@@ -19,14 +25,21 @@ public class HttpRequestReader {
         this.bis = new BufferedInputStream(in);
     }
 
-    public HttpRequest parseInputStream() throws IOException, TooManyListenersException{
+    /**
+     * Input Stream을 읽어 HttpRequest 인스턴스를 생성해 반환
+     * @return HttpRequest
+     * @throws IOException BufferedInputStream으로 read()할 때 발생할 수 있는 입출력 예외
+     * @throws TooLargeInputException content-length 값이 Integer.MAX_VALUE 값을 초과하는 경우 발생
+     * @throws MethodNotAllowedException request line을 읽을 때 허용되지 않은 Http Method인 경우 발생
+     */
+    public HttpRequest parseInputStream() throws IOException, MethodNotAllowedException, TooLargeInputException {
         // request line
         String requestLine = readLine();
         // 3-way-handshake 처리
         if (requestLine.isEmpty()) {
             return null;
         }
-        HttpRequestLine httpRequestLine = new HttpRequestLine(requestLine);
+        HttpRequestLine httpRequestLine = readRequestLine(requestLine);
 
         // header
         HttpHeader httpHeader = readHeader();
@@ -36,7 +49,7 @@ public class HttpRequestReader {
         try {
             contentLength = httpHeader.getContentLength();
         } catch (NumberFormatException e) {
-            throw new TooManyListenersException();
+            throw new TooLargeInputException();
         }
         HttpBody httpBody = contentLength > 0 ? readBody(contentLength) : new HttpBody();
 
@@ -64,6 +77,34 @@ public class HttpRequestReader {
             sb.append(readChar);
         }
         return sb.toString();
+    }
+
+    /**
+     * Http request의 첫 줄인 request line을 해석해 HttpRequestLine 인스턴스를 생성해 반환
+     * @param line input stream에서 읽은 첫 줄
+     * @return line을 해석해 HttpRequestLine을 생성해 반환
+     * @throws MethodNotAllowedException 허용되지 않은 HTTP Method이면 예외 발생
+     */
+    private HttpRequestLine readRequestLine(String line) throws MethodNotAllowedException{
+        String[] split = line.split(Delimiter.SPACE);
+
+        if (split.length != 3) {
+            throw new InvalidRequestLineFormatException();
+        }
+
+        HttpMethod httpMethod = HttpMethod.get(split[0]);
+        if (httpMethod == null) {
+            throw new MethodNotAllowedException();
+        }
+
+        String URL = split[1];
+
+        String version = split[2];
+        if (!version.equals(HTTP_VERSION)) {
+            throw new InvalidHttpVersionException();
+        }
+
+        return new HttpRequestLine(httpMethod, URL, version);
     }
 
     /**

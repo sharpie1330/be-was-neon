@@ -47,6 +47,9 @@ public class WebApplicationServer implements Runnable{
     private void runServer(HttpRequestReader httpRequestReader, HttpResponseWriter httpResponseWriter, Router router) {
         try {
             HttpRequest httpRequest = httpRequestReader.parseInputStream();
+
+            logger.debug("request method : {}, request url : {}", httpRequest.getRequestLine().getHttpMethod(), httpRequest.getRequestLine().getURL());
+
             HttpResponse httpResponse = router.route(httpRequest);
             httpResponseWriter.sendResponse(httpResponse);
         } catch (Exception e) {

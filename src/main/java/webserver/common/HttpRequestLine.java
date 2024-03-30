@@ -1,22 +1,16 @@
 package webserver.common;
 
 import webserver.type.HttpMethod;
-import webserver.utils.Delimiter;
 
 public class HttpRequestLine {
-    private HttpMethod httpMethod;
-    private String URL;
-    private String version;
+    private final HttpMethod httpMethod;
+    private final String URL;
+    private final String version;
 
-    public HttpRequestLine(String requestLine) {
-        String[] split = requestLine.split(Delimiter.SPACE);
-
-        // TODO: MethodNotAllowedException
-        if (split.length == 3) {
-            this.httpMethod = HttpMethod.get(split[0]);
-            this.URL = split[1];
-            this.version = split[2];
-        }
+    public HttpRequestLine(HttpMethod httpMethod, String URL, String version) {
+        this.httpMethod = httpMethod;
+        this.URL = URL;
+        this.version = version;
     }
 
     public HttpMethod getHttpMethod() {
@@ -29,9 +23,5 @@ public class HttpRequestLine {
 
     public String getVersion() {
         return version;
-    }
-
-    public boolean isNotValid() {
-        return httpMethod == null || version == null || !version.toUpperCase().contains("HTTP");
     }
 }
