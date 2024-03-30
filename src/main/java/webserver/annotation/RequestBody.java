@@ -1,4 +1,4 @@
-package webserver.annotation.requestBody;
+package webserver.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

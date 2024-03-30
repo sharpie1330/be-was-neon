@@ -37,7 +37,8 @@ public class Router {
     }
 
     public HttpResponse route(HttpRequest httpRequest) throws Exception{
-        String filePath = getFilePath(URLUtils.getPath(httpRequest.getRequestLine().getURL()));
+        String path = URLUtils.getPath(httpRequest.getRequestLine().getURL());
+        String filePath = getFilePath(path);
 
         // GET 요청이고, STATIC_MAPPING에서 경로 조회한 결과가 default인 경우에만 정적 페이지 라우팅
         if (httpRequest.getRequestLine().getHttpMethod().equals(HttpMethod.GET) &&
@@ -45,7 +46,7 @@ public class Router {
             return staticPageRouter.routeStaticPage(httpRequest, filePath);
         }
 
-        return dynamicPageRouter.routeDynamicPage(httpRequest);
+        return dynamicPageRouter.routeDynamicPage(httpRequest, path);
     }
 
     private String getFilePath(String path) {

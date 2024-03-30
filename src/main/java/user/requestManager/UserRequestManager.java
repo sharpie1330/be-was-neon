@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import webserver.common.KeyValueHttpBody;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
-import webserver.annotation.requestMapping.RequestMapping;
+import webserver.annotation.RequestMapping;
 import user.handler.UserHandler;
 import webserver.type.HttpMethod;
 

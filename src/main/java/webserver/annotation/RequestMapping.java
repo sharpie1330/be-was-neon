@@ -1,4 +1,4 @@
-package webserver.annotation.requestMapping;
+package webserver.annotation;
 
 import webserver.type.HttpMethod;
 
