@@ -1,6 +1,6 @@
 package codestargram;
 
-import user.requestManager.UserRequestManager;
+import codestargram.domain.user.requestManager.UserRequestManager;
 import webserver.WebServer;
 
 import java.util.List;

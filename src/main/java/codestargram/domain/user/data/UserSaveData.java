@@ -1,6 +1,6 @@
-package user.data;
+package codestargram.domain.user.data;
 
-import model.User;
+import codestargram.domain.user.model.User;
 
 public class UserSaveData {
     private final String userId;

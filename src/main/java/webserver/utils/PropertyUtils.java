@@ -8,7 +8,7 @@ import java.util.Properties;
 public class PropertyUtils {
 
     // TODO: build.gradle에서 처리할 수 있는지 고민해볼것
-    private static final String PROPERTY_FILEPATH = "./src/main/resources/config.properties";
+    private static final String PROPERTY_FILEPATH = "./src/main/java/webserver/config.properties";
 
     private PropertyUtils() {
 

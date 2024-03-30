@@ -1,13 +1,13 @@
-package db;
+package codestargram.domain.user.db;
 
-import model.User;
+import codestargram.domain.user.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class Database {
+public class UserDatabase {
     private static final Map<String, User> users = new HashMap<>();
 
     public static void addUser(User user) {

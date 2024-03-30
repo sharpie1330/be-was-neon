@@ -1,6 +1,6 @@
-package user.requestManager;
+package codestargram.domain.user.requestManager;
 
-import user.data.UserSaveData;
+import codestargram.domain.user.data.UserSaveData;
 import webserver.exception.server.BadRequestException;
 import webserver.exception.server.InternalServerErrorException;
 import org.slf4j.Logger;
@@ -9,7 +9,7 @@ import webserver.common.KeyValueHttpBody;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.annotation.RequestMapping;
-import user.handler.UserHandler;
+import codestargram.domain.user.handler.UserHandler;
 import webserver.type.HttpMethod;
 
 import java.io.UnsupportedEncodingException;

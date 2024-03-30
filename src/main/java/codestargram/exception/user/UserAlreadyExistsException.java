@@ -1,4 +1,4 @@
-package exception.user;
+package codestargram.exception.user;
 
 import webserver.exception.server.ConflictException;
 
