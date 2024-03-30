@@ -16,8 +16,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static webserver.WebServer.HTTP_VERSION;
-
 public class HttpRequestReader {
 
     private final BufferedInputStream bis;
@@ -101,7 +99,7 @@ public class HttpRequestReader {
         String URL = split[1];
 
         String version = split[2];
-        if (!version.equals(HTTP_VERSION)) {
+        if (!version.equals("HTTP/1.1")) {
             throw new InvalidHttpVersionException();
         }
 

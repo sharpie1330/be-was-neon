@@ -1,10 +1,10 @@
 package codestargram.domain.user.requestManager;
 
 import codestargram.domain.user.data.UserSaveData;
-import webserver.exception.server.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.KeyValueHttpBody;
+import webserver.exception.server.BadRequestException;
 import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.annotation.RequestMapping;
@@ -44,7 +44,7 @@ public class UserRequestManager {
         // redirect 응답 전송
         final String welcomePage = "/registration/welcome.html";
         return HttpResponse
-                .found(httpRequest.getRequestLine().getVersion(), welcomePage)
+                .found(welcomePage)
                 .build();
     }
 

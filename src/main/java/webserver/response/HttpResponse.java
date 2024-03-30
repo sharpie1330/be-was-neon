@@ -7,27 +7,25 @@ import webserver.type.MIMEType;
 import java.util.*;
 
 public class HttpResponse {
-    private final String version;
     private final HttpStatusCode httpStatusCode;
     private final HttpHeader headers;
     private final byte[] body;
 
-    public HttpResponse(String version, HttpStatusCode httpStatusCode, HttpHeader headers, byte[] body) {
-        this.version = version;
+    public HttpResponse(HttpStatusCode httpStatusCode, HttpHeader headers, byte[] body) {
         this.httpStatusCode = httpStatusCode;
         this.headers = headers;
         this.body = body;
     }
 
-    public static HttpResponse of(String version, byte[] body) {
+    public static HttpResponse of(byte[] body) {
         if (body != null) {
-            return HttpResponse.ok(version, body);
+            return HttpResponse.ok(body);
         }
-        return notFound(version).build();
+        return notFound().build();
     }
 
     public String getVersion() {
-        return version;
+        return "HTTP/1.1";
     }
 
     public HttpStatusCode getHttpStatusCode() {
@@ -46,51 +44,48 @@ public class HttpResponse {
         return body;
     }
 
-    public static Builder status(String version, HttpStatusCode httpStatusCode) {
-        return new ResponseBuilder(version, httpStatusCode);
+    public static Builder status(HttpStatusCode httpStatusCode) {
+        return new ResponseBuilder(httpStatusCode);
     }
 
-    public static Builder ok(String version) {
-        return new ResponseBuilder(version, HttpStatusCode.OK);
+    public static Builder ok() {
+        return new ResponseBuilder(HttpStatusCode.OK);
     }
 
-    public static HttpResponse ok(String version, byte[] body) {
-        return ok(version).body(body);
+    public static HttpResponse ok(byte[] body) {
+        return ok().body(body);
     }
 
-    public static Builder created(String version) {
-        return new ResponseBuilder(version, HttpStatusCode.CREATED);
+    public static Builder created() {
+        return new ResponseBuilder(HttpStatusCode.CREATED);
     }
 
-    public static Builder found(String version, String location) {
-        return new ResponseBuilder(version, HttpStatusCode.FOUND).location(location);
+    public static Builder found(String location) {
+        return new ResponseBuilder(HttpStatusCode.FOUND).location(location);
     }
 
-    public static Builder badRequest(String version) {
-        return new ResponseBuilder(version, HttpStatusCode.BAD_REQUEST);
+    public static Builder badRequest() {
+        return new ResponseBuilder(HttpStatusCode.BAD_REQUEST);
     }
 
-    public static Builder notFound(String version) {
-        return new ResponseBuilder(version, HttpStatusCode.NOT_FOUND);
+    public static Builder notFound() {
+        return new ResponseBuilder(HttpStatusCode.NOT_FOUND);
     }
 
-    public static Builder internalServerError(String version) {
-        return new ResponseBuilder(version, HttpStatusCode.INTERNAL_SERVER_ERROR);
+    public static Builder internalServerError() {
+        return new ResponseBuilder(HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
 
     private static class ResponseBuilder implements Builder{
-        private final String version;
         private final HttpStatusCode httpStatusCode;
         private final HttpHeader headers;
 
-        public ResponseBuilder(String version, HttpStatusCode httpStatusCode) {
-            this.version = version;
+        public ResponseBuilder(HttpStatusCode httpStatusCode) {
             this.httpStatusCode = httpStatusCode;
             this.headers = new HttpHeader();
         }
 
-        public ResponseBuilder(String version, HttpStatusCode httpStatusCode, HttpHeader headers) {
-            this.version = version;
+        public ResponseBuilder(HttpStatusCode httpStatusCode, HttpHeader headers) {
             this.httpStatusCode = httpStatusCode;
             this.headers = headers;
         }
@@ -133,7 +128,7 @@ public class HttpResponse {
 
         @Override
         public HttpResponse body(byte[] body) {
-            return new HttpResponse(version, httpStatusCode, headers, body);
+            return new HttpResponse(httpStatusCode, headers, body);
         }
     }
 

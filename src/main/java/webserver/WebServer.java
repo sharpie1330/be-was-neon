@@ -40,7 +40,6 @@ public class WebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
     public static String STATIC_SOURCE_PATH = "./src/main/resources/static";
-    public static String HTTP_VERSION = "HTTP/1.1";
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
     private final List<Class<?>> controllers;

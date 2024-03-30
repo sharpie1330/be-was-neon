@@ -14,8 +14,6 @@ import webserver.type.MIMEType;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import static webserver.WebServer.HTTP_VERSION;
-
 public class DefaultExceptionHandler implements ExceptionHandler{
     private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
@@ -99,7 +97,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
 
     private HttpResponse errorResponse(HttpStatusCode httpStatusCode, MIMEType mimeType, byte[] responseBody) {
         return HttpResponse
-                .status(HTTP_VERSION, httpStatusCode)
+                .status(httpStatusCode)
                 .contentType(mimeType)
                 .contentLength(responseBody.length)
                 .body(responseBody);
