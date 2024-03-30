@@ -14,6 +14,8 @@ import webserver.type.MIMEType;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import static webserver.WebServer.HTTP_VERSION;
+
 public class DefaultExceptionHandler implements ExceptionHandler{
     private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
@@ -47,11 +49,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
 
         byte[] responseBody = createResponseBody(HttpStatusCode.NOT_FOUND);
 
-        return HttpResponse
-                .status("HTTP/1.1", HttpStatusCode.NOT_FOUND)
-                .contentType(MIMEType.html)
-                .contentLength(responseBody.length)
-                .body(responseBody);
+        return errorResponse(HttpStatusCode.NOT_FOUND, MIMEType.html, responseBody);
     }
 
     private HttpResponse handleBadRequestException(BadRequestException be) {
@@ -60,11 +58,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
 
         byte[] responseBody = createResponseBody(HttpStatusCode.BAD_REQUEST);
 
-        return HttpResponse
-                .status("HTTP/1.1", HttpStatusCode.BAD_REQUEST)
-                .contentType(MIMEType.html)
-                .contentLength(responseBody.length)
-                .body(responseBody);
+        return errorResponse(HttpStatusCode.BAD_REQUEST, MIMEType.html, responseBody);
     }
 
     private HttpResponse handleMethodNotAllowedException(MethodNotAllowedException me) {
@@ -73,11 +67,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
 
         byte[] responseBody = createResponseBody(HttpStatusCode.METHOD_NOT_ALLOWED);
 
-        return HttpResponse
-                .status("HTTP/1.1", HttpStatusCode.METHOD_NOT_ALLOWED)
-                .contentType(MIMEType.html)
-                .contentLength(responseBody.length)
-                .body(responseBody);
+        return errorResponse(HttpStatusCode.METHOD_NOT_ALLOWED, MIMEType.html, responseBody);
     }
 
     private HttpResponse handleServerException(ServerException ce) {
@@ -86,11 +76,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
 
         byte[] responseBody = createResponseBody(ce.getHttpStatusCode());
 
-        return HttpResponse
-                .status("HTTP/1.1", ce.getHttpStatusCode())
-                .contentType(MIMEType.html)
-                .contentLength(responseBody.length)
-                .body(responseBody);
+        return errorResponse(ce.getHttpStatusCode(), MIMEType.html, responseBody);
     }
 
     private HttpResponse handleApplicationException(ApplicationException se) {
@@ -99,11 +85,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
 
         byte[] responseBody = createResponseBody(se.getHttpStatusCode());
 
-        return HttpResponse
-                .status("HTTP/1.1", se.getHttpStatusCode())
-                .contentType(MIMEType.html)
-                .contentLength(responseBody.length)
-                .body(responseBody);
+        return errorResponse(se.getHttpStatusCode(), MIMEType.html, responseBody);
     }
 
     private HttpResponse handleOtherException(Exception e) {
@@ -112,9 +94,13 @@ public class DefaultExceptionHandler implements ExceptionHandler{
 
         byte[] responseBody = createResponseBody(HttpStatusCode.INTERNAL_SERVER_ERROR);
 
+        return errorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, MIMEType.html, responseBody);
+    }
+
+    private HttpResponse errorResponse(HttpStatusCode httpStatusCode, MIMEType mimeType, byte[] responseBody) {
         return HttpResponse
-                .status("HTTP/1.1", HttpStatusCode.INTERNAL_SERVER_ERROR)
-                .contentType(MIMEType.html)
+                .status(HTTP_VERSION, httpStatusCode)
+                .contentType(mimeType)
                 .contentLength(responseBody.length)
                 .body(responseBody);
     }

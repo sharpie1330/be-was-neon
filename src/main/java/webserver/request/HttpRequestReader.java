@@ -16,8 +16,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static webserver.WebServer.HTTP_VERSION;
+
 public class HttpRequestReader {
-    private static final String HTTP_VERSION = "HTTP/1.1";  // 1.1만 지원
 
     private final BufferedInputStream bis;
 
