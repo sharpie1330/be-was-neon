@@ -7,14 +7,11 @@ import java.util.Properties;
 
 public class PropertyUtils {
 
-    // TODO: build.gradle에서 처리할 수 있는지 고민해볼것
-    private static final String PROPERTY_FILEPATH = "./src/main/java/webserver/config.properties";
-
     private PropertyUtils() {
 
     }
 
-    public static Properties loadProperties() {
+    public static Properties loadProperties(String PROPERTY_FILEPATH) {
         Properties properties = new Properties();
         File file = new File(PROPERTY_FILEPATH);
 
@@ -25,13 +22,5 @@ public class PropertyUtils {
         }
 
         return properties;
-    }
-
-    public static int loadPortFromProperties() {
-        return Integer.parseInt(loadProperties().getProperty("port"));
-    }
-
-    public static String loadStaticSourcePathFromProperties() {
-        return loadProperties().getProperty("staticSourcePath");
     }
 }

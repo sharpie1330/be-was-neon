@@ -1,4 +1,4 @@
-package webserver.route.router;
+package webserver.route;
 
 import webserver.exception.request.PathNotFoundException;
 import webserver.request.HttpRequest;

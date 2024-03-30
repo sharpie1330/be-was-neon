@@ -2,7 +2,6 @@ package codestargram.domain.user.requestManager;
 
 import codestargram.domain.user.data.UserSaveData;
 import webserver.exception.server.BadRequestException;
-import webserver.exception.server.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.common.KeyValueHttpBody;
@@ -12,16 +11,13 @@ import webserver.annotation.RequestMapping;
 import codestargram.domain.user.handler.UserHandler;
 import webserver.type.HttpMethod;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static webserver.utils.PropertyUtils.loadProperties;
-
 public class UserRequestManager {
     private static final Logger logger = LoggerFactory.getLogger(UserRequestManager.class);
-    private static final String CHARSET = loadProperties().getProperty("charset");
 
     private final UserHandler userHandler;
 
@@ -54,15 +50,11 @@ public class UserRequestManager {
 
     private UserSaveData createSaveData(KeyValueHttpBody body) {
         // 디코딩
-        try {
-            String userId = URLDecoder.decode(body.get("userId"), CHARSET);
-            String password = URLDecoder.decode(body.get("password"), CHARSET);
-            String nickname = URLDecoder.decode(body.get("nickname"), CHARSET);
-            String email = URLDecoder.decode(body.get("email"), CHARSET);
-            return new UserSaveData(userId, password, nickname, email);
-        } catch (UnsupportedEncodingException e) {
-            throw new InternalServerErrorException(e.getMessage(), e);
-        }
+        String userId = URLDecoder.decode(body.get("userId"), StandardCharsets.UTF_8);
+        String password = URLDecoder.decode(body.get("password"), StandardCharsets.UTF_8);
+        String nickname = URLDecoder.decode(body.get("nickname"), StandardCharsets.UTF_8);
+        String email = URLDecoder.decode(body.get("email"), StandardCharsets.UTF_8);
+        return new UserSaveData(userId, password, nickname, email);
     }
 
     // 유저 생성 파라미터 유효성 확인
