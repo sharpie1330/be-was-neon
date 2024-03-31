@@ -5,7 +5,6 @@ import webserver.exception.request.InvalidRequestLineFormatException;
 import webserver.exception.request.TooLargeInputException;
 import webserver.exception.server.MethodNotAllowedException;
 import webserver.http.type.*;
-import webserver.type.*;
 import webserver.utils.Delimiter;
 
 import java.io.BufferedInputStream;
