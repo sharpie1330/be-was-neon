@@ -1,7 +1,7 @@
 package webserver.common;
 
 import webserver.type.MIMEType;
-import webserver.utils.RequestParser;
+import webserver.utils.Delimiter;
 
 import java.util.*;
 
@@ -17,7 +17,23 @@ public class HttpHeader{
     }
 
     public static HttpHeader of(List<String> headers) {
-        return new HttpHeader(RequestParser.parseHeader(headers));
+        return new HttpHeader(parseHeader(headers));
+    }
+
+    private static Map<String, List<String>> parseHeader(List<String> requestHeader) {
+        Map<String, List<String>> headerMap = new HashMap<>();
+
+        for (String headerLine : requestHeader) {
+            String[] keyValue = headerLine.split(Delimiter.COLON, 2);
+            String headerKey = keyValue[0].trim();
+            List<String> headerValues = new ArrayList<>();
+            for (String headerValue : keyValue[1].split(Delimiter.SEMICOLON)) {
+                headerValues.add(headerValue.trim());
+            }
+            headerMap.put(headerKey, headerValues);
+        }
+
+        return headerMap;
     }
 
     public HttpHeader(Map<String, List<String>> headers) {
@@ -35,11 +51,11 @@ public class HttpHeader{
 
     public MIMEType getContentType() {
         String contentType = getFirst(CONTENT_TYPE);
-        return MIMEType.getMimeType(contentType);
+        return MIMEType.getMimeTypeByContentType(contentType);
     }
 
     public void setContentType(MIMEType mimeType) {
-        setOrRemove(CONTENT_TYPE, mimeType.getMimeType());
+        setOrRemove(CONTENT_TYPE, mimeType.getMimeTypeByExtension());
     }
 
     public String getLocation() {

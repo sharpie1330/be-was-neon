@@ -23,7 +23,7 @@ public class StaticPageRouter {
         try (FileInputStream fileIn = new FileInputStream(file)) {
             byte[] body = new byte[(int) file.length()];
             int readLen = fileIn.read(body);
-            MIMEType mimeType = MIMEType.getMimeType(URLUtils.getExtension(filePath));
+            MIMEType mimeType = MIMEType.getMimeTypeByExtension(URLUtils.getExtension(filePath));
             return HttpResponse
                     .ok()
                     .contentLength(readLen)

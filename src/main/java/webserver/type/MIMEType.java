@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 public enum MIMEType {
     txt("txt/plain"),
+    urlencoded("application/x-www-form-urlencoded"),
     svg("image/svg+xml"),
     ico("image/vnd.microsoft.icon"),
     css("text/css"),
@@ -19,14 +20,21 @@ public enum MIMEType {
         this.mimeType = mimeType;
     }
 
-    public String getMimeType() {
+    public String getMimeTypeByExtension() {
         return mimeType;
     }
 
-    public static MIMEType getMimeType(String extension) {
+    public static MIMEType getMimeTypeByExtension(String extension) {
         return Arrays.stream(MIMEType.values())
                 .filter(m -> m.name().equals(extension))
-                .findAny()
+                .findFirst()
                 .orElse(txt);    // default : txt
+    }
+
+    public static MIMEType getMimeTypeByContentType(String contentType) {
+        return Arrays.stream(MIMEType.values())
+                .filter(m -> m.getMimeTypeByExtension().equals(contentType))
+                .findFirst()
+                .orElse(txt);
     }
 }
