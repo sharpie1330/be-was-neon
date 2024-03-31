@@ -16,8 +16,6 @@ import webserver.http.type.HttpMethod;
 import webserver.session.Cookie;
 import webserver.session.Session;
 
-import java.util.UUID;
-
 public class UserRequestManager {
     private static final Logger logger = LoggerFactory.getLogger(UserRequestManager.class);
 
@@ -33,9 +31,9 @@ public class UserRequestManager {
         userHandler.userCreate(userSaveData);
 
         // redirect 응답 전송
-        final String welcomePage = "/registration/welcome.html";
         return HttpResponse
-                .found(welcomePage)
+                .found("/registration/welcome.html")
+                .header(HttpHeader.SET_COOKIE, createCookie(userSaveData.getUserId()).toString())
                 .build();
     }
 
@@ -49,15 +47,19 @@ public class UserRequestManager {
                     .build();
         }
 
-        String sessionId = Session.setSession(userLoginData.getUserId());
+        return HttpResponse
+                .found("/main")
+                .header(HttpHeader.SET_COOKIE, createCookie(userLoginData.getUserId()).toString())
+                .build();
+    }
+
+    private Cookie createCookie(String userId) {
+        String sessionId = Session.setSession(userId);
         Cookie cookie = new Cookie();
         cookie.setSID(sessionId);
         cookie.setPath("/");
         cookie.setMaxAge(3600);
 
-        return HttpResponse
-                .found("/main")
-                .header(HttpHeader.SET_COOKIE, cookie.toString())
-                .build();
+        return cookie;
     }
 }
