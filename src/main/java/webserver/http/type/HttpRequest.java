@@ -1,8 +1,4 @@
-package webserver.request;
-
-import webserver.common.HttpBody;
-import webserver.common.HttpHeader;
-import webserver.common.HttpRequestLine;
+package webserver.http.type;
 
 public class HttpRequest {
     private final HttpRequestLine requestLine;

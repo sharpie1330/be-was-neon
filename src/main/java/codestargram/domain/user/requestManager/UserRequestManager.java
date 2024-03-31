@@ -5,10 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.annotation.RequestBody;
 import webserver.annotation.Valid;
-import webserver.response.HttpResponse;
+import webserver.http.type.HttpResponse;
 import webserver.annotation.RequestMapping;
 import codestargram.domain.user.handler.UserHandler;
-import webserver.type.HttpMethod;
+import webserver.http.type.HttpMethod;
 
 public class UserRequestManager {
     private static final Logger logger = LoggerFactory.getLogger(UserRequestManager.class);

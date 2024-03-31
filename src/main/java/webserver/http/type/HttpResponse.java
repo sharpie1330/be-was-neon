@@ -1,8 +1,4 @@
-package webserver.response;
-
-import webserver.common.HttpHeader;
-import webserver.type.HttpStatusCode;
-import webserver.type.MIMEType;
+package webserver.http.type;
 
 import java.util.*;
 

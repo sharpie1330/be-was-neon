@@ -1,6 +1,5 @@
-package webserver.common;
+package webserver.http.type;
 
-import webserver.type.MIMEType;
 import webserver.utils.Delimiter;
 
 import java.util.*;

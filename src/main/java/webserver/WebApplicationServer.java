@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.exception.DefaultExceptionHandler;
 import webserver.exception.ExceptionHandler;
-import webserver.request.HttpRequest;
-import webserver.request.HttpRequestReader;
-import webserver.response.HttpResponse;
-import webserver.response.HttpResponseWriter;
+import webserver.http.type.HttpRequest;
+import webserver.http.HttpRequestReader;
+import webserver.http.type.HttpResponse;
+import webserver.http.HttpResponseWriter;
 import webserver.route.Router;
 
 import java.io.IOException;

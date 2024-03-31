@@ -1,13 +1,11 @@
-package webserver.request;
+package webserver.http;
 
-import webserver.common.HttpBody;
-import webserver.common.HttpHeader;
-import webserver.common.HttpRequestLine;
 import webserver.exception.request.InvalidHttpVersionException;
 import webserver.exception.request.InvalidRequestLineFormatException;
 import webserver.exception.request.TooLargeInputException;
 import webserver.exception.server.MethodNotAllowedException;
-import webserver.type.HttpMethod;
+import webserver.http.type.*;
+import webserver.type.*;
 import webserver.utils.Delimiter;
 
 import java.io.BufferedInputStream;

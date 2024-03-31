@@ -1,6 +1,6 @@
 package webserver.exception.common;
 
-import webserver.type.HttpStatusCode;
+import webserver.http.type.HttpStatusCode;
 
 public class ApplicationException extends RuntimeException{
     private final HttpStatusCode httpStatusCode;

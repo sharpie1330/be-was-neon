@@ -1,8 +1,8 @@
 package webserver.route;
 
-import webserver.request.HttpRequest;
-import webserver.response.HttpResponse;
-import webserver.type.HttpMethod;
+import webserver.http.type.HttpRequest;
+import webserver.http.type.HttpResponse;
+import webserver.http.type.HttpMethod;
 import webserver.utils.Delimiter;
 import webserver.utils.URLUtils;
 

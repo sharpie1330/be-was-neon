@@ -1,8 +1,7 @@
-package webserver.request;
+package webserver.utils;
 
-import webserver.common.HttpBody;
 import webserver.exception.request.MalformedBodyFormatException;
-import webserver.utils.Delimiter;
+import webserver.http.type.HttpBody;
 
 import java.lang.reflect.*;
 import java.net.URLDecoder;

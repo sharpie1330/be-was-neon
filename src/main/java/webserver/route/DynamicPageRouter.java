@@ -3,12 +3,12 @@ package webserver.route;
 import webserver.annotation.RequestBody;
 import webserver.exception.request.PathNotFoundException;
 import webserver.exception.request.UnsupportedContentTypeException;
-import webserver.request.HttpRequest;
-import webserver.request.HttpRequestBodyConverter;
-import webserver.request.UrlEncodedFormatConverter;
-import webserver.response.HttpResponse;
+import webserver.http.type.HttpRequest;
+import webserver.http.type.HttpResponse;
 import webserver.annotation.RequestMapping;
-import webserver.type.MIMEType;
+import webserver.http.type.MIMEType;
+import webserver.utils.HttpRequestBodyConverter;
+import webserver.utils.UrlEncodedFormatConverter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

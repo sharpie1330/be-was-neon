@@ -1,6 +1,6 @@
 package webserver.exception;
 
-import webserver.response.HttpResponse;
+import webserver.http.type.HttpResponse;
 
 public interface ExceptionHandler {
     HttpResponse handleException(Exception e);

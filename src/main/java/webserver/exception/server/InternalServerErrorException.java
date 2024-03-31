@@ -1,7 +1,7 @@
 package webserver.exception.server;
 
 import webserver.exception.common.ApplicationException;
-import webserver.type.HttpStatusCode;
+import webserver.http.type.HttpStatusCode;
 
 public class InternalServerErrorException extends ApplicationException {
     public InternalServerErrorException() {

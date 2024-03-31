@@ -1,6 +1,6 @@
 package webserver.exception.common;
 
-import webserver.type.HttpStatusCode;
+import webserver.http.type.HttpStatusCode;
 
 public class ServerException extends Exception{
     private final HttpStatusCode httpStatusCode;

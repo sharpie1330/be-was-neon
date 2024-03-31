@@ -1,7 +1,7 @@
 package webserver.exception.request;
 
 import webserver.exception.common.ServerException;
-import webserver.type.HttpStatusCode;
+import webserver.http.type.HttpStatusCode;
 
 public class TooLargeInputException extends ServerException {
 

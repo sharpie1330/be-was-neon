@@ -1,4 +1,4 @@
-package webserver.common;
+package webserver.http.type;
 
 public class HttpBody {
     private final byte[] body;

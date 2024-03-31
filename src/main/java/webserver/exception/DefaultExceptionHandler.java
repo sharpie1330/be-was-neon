@@ -7,9 +7,9 @@ import webserver.exception.common.ServerException;
 import webserver.exception.server.BadRequestException;
 import webserver.exception.server.MethodNotAllowedException;
 import webserver.exception.server.NotFoundException;
-import webserver.response.HttpResponse;
-import webserver.type.HttpStatusCode;
-import webserver.type.MIMEType;
+import webserver.http.type.HttpResponse;
+import webserver.http.type.HttpStatusCode;
+import webserver.http.type.MIMEType;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

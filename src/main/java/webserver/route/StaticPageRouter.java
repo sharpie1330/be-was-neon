@@ -2,9 +2,9 @@ package webserver.route;
 
 import webserver.exception.server.InternalServerErrorException;
 import webserver.exception.request.PathNotFoundException;
-import webserver.request.HttpRequest;
-import webserver.response.HttpResponse;
-import webserver.type.MIMEType;
+import webserver.http.type.HttpRequest;
+import webserver.http.type.HttpResponse;
+import webserver.http.type.MIMEType;
 import webserver.utils.URLUtils;
 
 import java.io.File;

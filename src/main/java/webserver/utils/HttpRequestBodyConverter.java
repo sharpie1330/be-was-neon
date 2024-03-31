@@ -1,9 +1,9 @@
-package webserver.request;
+package webserver.utils;
 
 import webserver.annotation.CheckValid;
 import webserver.annotation.Valid;
-import webserver.common.HttpBody;
 import webserver.exception.server.BadRequestException;
+import webserver.http.type.HttpBody;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;

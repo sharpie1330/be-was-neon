@@ -1,6 +1,4 @@
-package webserver.common;
-
-import webserver.type.HttpMethod;
+package webserver.http.type;
 
 public class HttpRequestLine {
     private final HttpMethod httpMethod;
