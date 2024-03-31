@@ -5,6 +5,7 @@ import codestargram.domain.user.data.UserSaveData;
 import codestargram.domain.user.db.UserDatabase;
 import codestargram.exception.user.UserAlreadyExistsException;
 import codestargram.domain.user.model.User;
+import codestargram.exception.user.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.exception.server.UnauthorizedException;
@@ -30,13 +31,11 @@ public class UserHandler {
     }
 
     public void login(UserLoginData userLoginData) throws UnauthorizedException {
-        final String LOGIN_FAIL_MESSAGE = "아이디 또는 비밀번호가 일치하지 않습니다.";
-
         User findUser = UserDatabase.findUserById(userLoginData.getUserId())
-                .orElseThrow(() -> new UnauthorizedException(LOGIN_FAIL_MESSAGE));
+                .orElseThrow(UserNotFoundException::new);
 
         if (!findUser.getPassword().equals(userLoginData.getPassword())) {
-            throw new UnauthorizedException(LOGIN_FAIL_MESSAGE);
+            throw new UnauthorizedException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
     }
 }

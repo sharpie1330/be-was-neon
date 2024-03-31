@@ -35,6 +35,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.exception.ExceptionHandler;
+import webserver.filter.Filter;
 
 public class WebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
@@ -43,14 +44,17 @@ public class WebServer {
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
     private final List<Class<?>> controllers;
+    private final List<Filter> filters;
     private ExceptionHandler exceptionHandler;
 
-    public WebServer(List<Class<?>> controllers) {
+    public WebServer(List<Class<?>> controllers, List<Filter> filters) {
         this.controllers = controllers;
+        this.filters = filters;
     }
 
-    public WebServer(List<Class<?>> controllers, ExceptionHandler exceptionHandler) {
+    public WebServer(List<Class<?>> controllers, List<Filter> filters, ExceptionHandler exceptionHandler) {
         this.controllers = controllers;
+        this.filters = filters;
         this.exceptionHandler = exceptionHandler;
     }
 
@@ -72,7 +76,7 @@ public class WebServer {
             while ((connection = listenSocket.accept()) != null) {
                 executorService.execute(
                         new WebApplicationServer(
-                                connection, controllers, exceptionHandler
+                                connection, controllers, filters, exceptionHandler
                         )
                 );
             }

@@ -2,6 +2,7 @@ package codestargram.domain.user.requestManager;
 
 import codestargram.domain.user.data.UserLoginData;
 import codestargram.domain.user.data.UserSaveData;
+import codestargram.exception.user.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.annotation.RequestBody;
@@ -42,7 +43,7 @@ public class UserRequestManager {
     public HttpResponse login(@Valid @RequestBody UserLoginData userLoginData) {
         try {
             userHandler.login(userLoginData);
-        } catch (UnauthorizedException e) {
+        } catch (UserNotFoundException | UnauthorizedException e) {
             return HttpResponse
                     .found("/login/login_failed.html")
                     .build();
