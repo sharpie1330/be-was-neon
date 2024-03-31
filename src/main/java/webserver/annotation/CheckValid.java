@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface CheckValid {
     String regex() default ".*";
+    boolean included() default true;
+    String message() default "";
 }

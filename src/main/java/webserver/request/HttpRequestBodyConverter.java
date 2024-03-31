@@ -1,10 +1,16 @@
 package webserver.request;
 
+import webserver.annotation.CheckValid;
+import webserver.annotation.Valid;
 import webserver.common.HttpBody;
+import webserver.exception.server.BadRequestException;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public interface HttpRequestBodyConverter {
 
@@ -28,6 +34,25 @@ public interface HttpRequestBodyConverter {
         }
 
         throw new IllegalArgumentException("Unsupported field type: " + fieldType.getName());
+    }
+
+    default boolean isValidAnnotationPresent(Parameter parameter) {
+        return parameter.isAnnotationPresent(Valid.class);
+    }
+
+    default void checkValid(Field field, String value) {
+        if (!field.isAnnotationPresent(CheckValid.class)) {
+            return;
+        }
+
+        CheckValid annotation = field.getAnnotation(CheckValid.class);
+        Pattern pattern = Pattern.compile(annotation.regex());
+        Matcher matcher = pattern.matcher(value);
+        boolean matches = matcher.matches();
+
+        if (annotation.included() != matches) {
+            throw new BadRequestException(annotation.message() != null ? annotation.message() : "Invalid Request Data");
+        }
     }
 
     Object convert(HttpBody httpBody, Parameter parameter) throws Exception;

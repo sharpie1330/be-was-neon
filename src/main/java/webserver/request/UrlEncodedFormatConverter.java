@@ -23,20 +23,25 @@ public class UrlEncodedFormatConverter implements HttpRequestBodyConverter{
         Map<String, String> parsedBody = parseBody(httpBody);
 
         Class<?> type = parameter.getType();
+        boolean validAnnotationPresent = isValidAnnotationPresent(parameter);
 
         List<Class<?>> fieldTypes = new ArrayList<>();
         List<Object> fieldValues = new ArrayList<>();
         for (Field field : type.getDeclaredFields()) {
-            Class<?> fieldType = field.getType();
             String fieldValue = URLDecoder.decode(parsedBody.get(field.getName()), StandardCharsets.UTF_8);
+
+            if (validAnnotationPresent) {
+                checkValid(field, fieldValue);
+            }
+
+            Class<?> fieldType = field.getType();
             fieldTypes.add(fieldType);
             fieldValues.add(convertValue(fieldValue, fieldType));
         }
-        Class<?>[] fieldTypesArray = fieldTypes.toArray(new Class<?>[0]);
-        Object[] fieldValuesArray = fieldValues.toArray(new Object[0]);
 
-        Constructor<?> allArgsConstructor = type.getDeclaredConstructor(fieldTypesArray);
-        return allArgsConstructor.newInstance(fieldValuesArray);
+
+        Constructor<?> allArgsConstructor = type.getDeclaredConstructor(fieldTypes.toArray(new Class<?>[0]));
+        return allArgsConstructor.newInstance(fieldValues.toArray());
     }
 
     @Override

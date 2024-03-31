@@ -4,6 +4,7 @@ import codestargram.domain.user.data.UserSaveData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.annotation.RequestBody;
+import webserver.annotation.Valid;
 import webserver.exception.server.BadRequestException;
 import webserver.response.HttpResponse;
 import webserver.annotation.RequestMapping;
@@ -23,12 +24,7 @@ public class UserRequestManager {
     }
 
     @RequestMapping(path = "/user/create", method = HttpMethod.POST)
-    public HttpResponse createUser(@RequestBody UserSaveData userSaveData) {
-        // 쿼리 파리미터 유효성 확인
-        if (!validateUserCreateParam(userSaveData)) {
-            throw new BadRequestException("사용자 데이터가 유효하지 않습니다.");
-        }
-
+    public HttpResponse createUser(@Valid @RequestBody UserSaveData userSaveData) {
         // 유저 생성
         userHandler.userCreate(userSaveData);
 
