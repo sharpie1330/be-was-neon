@@ -45,7 +45,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
         logger.error("[NotFoundException] errorMessage : {} | cause Exception : {}",
                 ne.getErrorMessage(), getExceptionStackTrace(ne));
 
-        byte[] responseBody = createResponseBody(HttpStatusCode.NOT_FOUND);
+        byte[] responseBody = createResponseBody(HttpStatusCode.NOT_FOUND, ne.getErrorMessage());
 
         return errorResponse(HttpStatusCode.NOT_FOUND, MIMEType.html, responseBody);
     }
@@ -54,7 +54,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
         logger.error("[BadRequestException] errorMessage : {} | cause Exception : {}",
                 be.getErrorMessage(), getExceptionStackTrace(be));
 
-        byte[] responseBody = createResponseBody(HttpStatusCode.BAD_REQUEST);
+        byte[] responseBody = createResponseBody(HttpStatusCode.BAD_REQUEST, be.getErrorMessage());
 
         return errorResponse(HttpStatusCode.BAD_REQUEST, MIMEType.html, responseBody);
     }
@@ -63,7 +63,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
         logger.error("[MethodNotAllowedException] errorMessage : {} | cause Exception : {}",
                 me.getErrorMessage(), getExceptionStackTrace(me));
 
-        byte[] responseBody = createResponseBody(HttpStatusCode.METHOD_NOT_ALLOWED);
+        byte[] responseBody = createResponseBody(HttpStatusCode.METHOD_NOT_ALLOWED, me.getErrorMessage());
 
         return errorResponse(HttpStatusCode.METHOD_NOT_ALLOWED, MIMEType.html, responseBody);
     }
@@ -72,7 +72,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
         logger.error("[ServerException] errorMessage : {} | cause Exception : {}",
                 ce.getErrorMessage(), getExceptionStackTrace(ce));
 
-        byte[] responseBody = createResponseBody(ce.getHttpStatusCode());
+        byte[] responseBody = createResponseBody(ce.getHttpStatusCode(), ce.getErrorMessage());
 
         return errorResponse(ce.getHttpStatusCode(), MIMEType.html, responseBody);
     }
@@ -81,7 +81,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
         logger.error("[ApplicationException] errorMessage : {} | cause Exception : {}",
                 se.getErrorMessage(), getExceptionStackTrace(se));
 
-        byte[] responseBody = createResponseBody(se.getHttpStatusCode());
+        byte[] responseBody = createResponseBody(se.getHttpStatusCode(), se.getErrorMessage());
 
         return errorResponse(se.getHttpStatusCode(), MIMEType.html, responseBody);
     }
@@ -90,7 +90,7 @@ public class DefaultExceptionHandler implements ExceptionHandler{
         logger.error("[Exception] errorMessage : {} | cause Exception : {}",
                 e.getMessage(), getExceptionStackTrace(e));
 
-        byte[] responseBody = createResponseBody(HttpStatusCode.INTERNAL_SERVER_ERROR);
+        byte[] responseBody = createResponseBody(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getMessage());
 
         return errorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, MIMEType.html, responseBody);
     }
@@ -103,8 +103,19 @@ public class DefaultExceptionHandler implements ExceptionHandler{
                 .body(responseBody);
     }
 
-    private byte[] createResponseBody(HttpStatusCode httpStatusCode) {
-        String status = "<h1 style=\"text-align: center;\">" + httpStatusCode.getMessage() + "</h1>";
+    private byte[] createResponseBody(HttpStatusCode httpStatusCode, String errorMessage) {
+        String status =
+                """
+                   <!DOCTYPE html>
+                   <html lang="ko">
+                     <head>
+                       <meta charset="UTF-8" />
+                       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                       <title>""" + httpStatusCode.getMessage() + "</title>\n</head>\n" +
+                "<body>\n" +
+                "<h1 style=\"text-align: center;\">" + httpStatusCode.getMessage() + "</h1>\n" +
+                "<h3 style=\"text-align: center;\">" + errorMessage + "</h3>\n" +
+                "</body>\n</html>";
         return status.getBytes();
     }
 
