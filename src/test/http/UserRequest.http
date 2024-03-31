@@ -1,5 +1,5 @@
 ### 회원가입
 POST http://localhost:8080/user/create
-Content-Type: text/plain
+Content-Type: application/x-www-form-urlencoded
 
 userId=hello&email=hello%40gmail.com&nickname=hello&password=1234
