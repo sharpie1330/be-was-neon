@@ -3,16 +3,13 @@ package codestargram.domain.user.requestManager;
 import codestargram.domain.user.data.UserSaveData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.common.KeyValueHttpBody;
+import webserver.annotation.RequestBody;
 import webserver.exception.server.BadRequestException;
-import webserver.request.HttpRequest;
 import webserver.response.HttpResponse;
 import webserver.annotation.RequestMapping;
 import codestargram.domain.user.handler.UserHandler;
 import webserver.type.HttpMethod;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,13 +23,7 @@ public class UserRequestManager {
     }
 
     @RequestMapping(path = "/user/create", method = HttpMethod.POST)
-    public HttpResponse createUser(HttpRequest httpRequest) {
-        // body 얻어서 keyValueMap으로 변경
-        KeyValueHttpBody body = KeyValueHttpBody.of(httpRequest.getBody());
-
-        // 저장할 정보 객체 생성
-        UserSaveData userSaveData = createSaveData(body);
-
+    public HttpResponse createUser(@RequestBody UserSaveData userSaveData) {
         // 쿼리 파리미터 유효성 확인
         if (!validateUserCreateParam(userSaveData)) {
             throw new BadRequestException("사용자 데이터가 유효하지 않습니다.");
@@ -46,15 +37,6 @@ public class UserRequestManager {
         return HttpResponse
                 .found(welcomePage)
                 .build();
-    }
-
-    private UserSaveData createSaveData(KeyValueHttpBody body) {
-        // 디코딩
-        String userId = URLDecoder.decode(body.get("userId"), StandardCharsets.UTF_8);
-        String password = URLDecoder.decode(body.get("password"), StandardCharsets.UTF_8);
-        String nickname = URLDecoder.decode(body.get("nickname"), StandardCharsets.UTF_8);
-        String email = URLDecoder.decode(body.get("email"), StandardCharsets.UTF_8);
-        return new UserSaveData(userId, password, nickname, email);
     }
 
     // 유저 생성 파라미터 유효성 확인
