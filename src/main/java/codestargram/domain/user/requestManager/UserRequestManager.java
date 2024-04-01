@@ -17,8 +17,6 @@ import webserver.http.type.HttpMethod;
 import webserver.session.Cookie;
 import webserver.session.Session;
 
-import java.util.List;
-
 public class UserRequestManager {
     private static final Logger logger = LoggerFactory.getLogger(UserRequestManager.class);
 
@@ -33,25 +31,11 @@ public class UserRequestManager {
         // 유저 생성
         userHandler.userCreate(userSaveData);
 
-        logger.debug(cookie.get("redirectUrl") != null ? cookie.get("redirectUrl") : "/registration/welcome.html");
-
-        HttpResponse build = HttpResponse
-                .found(cookie.get("redirectUrl") != null ? cookie.get("redirectUrl") : "/registration/welcome.html")
-                .header(HttpHeader.SET_COOKIE, createCookie(userSaveData.getUserId()).toString())
-                .header(HttpHeader.SET_COOKIE + 1, "redirectUrl=;Max-Age=0")
-                .build();
-
-        List<String> list = build.getHeaders().get(HttpHeader.SET_COOKIE);
-        List<String> list2 = build.getHeaders().get(HttpHeader.SET_COOKIE + 1);
-
-        logger.debug(list.toString());
-        logger.debug(list2.toString());
-
         // redirect 응답 전송
         return HttpResponse
                 .found(cookie.get("redirectUrl") != null ? cookie.get("redirectUrl") : "/registration/welcome.html")
                 .header(HttpHeader.SET_COOKIE, createCookie(userSaveData.getUserId()).toString())
-                .header(HttpHeader.SET_COOKIE + 1, "redirectUrl=;Max-Age=0")
+                .header(HttpHeader.SET_COOKIE + 1, createDeleteCookie().toString())
                 .build();
     }
 
@@ -68,7 +52,7 @@ public class UserRequestManager {
         return HttpResponse
                 .found(cookie.get("redirectUrl") != null ? cookie.get("redirectUrl") : "/main")
                 .header(HttpHeader.SET_COOKIE, createCookie(userLoginData.getUserId()).toString())
-                .header(HttpHeader.SET_COOKIE + 1, "redirectUrl=;Max-Age=0")
+                .header(HttpHeader.SET_COOKIE + 1, createDeleteCookie().toString())
                 .build();
     }
 
@@ -77,6 +61,15 @@ public class UserRequestManager {
         cookie.setSID(Session.setSession(userId));
         cookie.setPath("/");
         cookie.setMaxAge(3600);
+
+        return cookie;
+    }
+
+    private Cookie createDeleteCookie() {
+        Cookie cookie = new Cookie();
+        cookie.setCookie("redirectUrl", "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
 
         return cookie;
     }
