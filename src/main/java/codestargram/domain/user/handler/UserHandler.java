@@ -9,6 +9,7 @@ import codestargram.exception.user.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.exception.server.UnAuthorizedException;
+import webserver.session.Session;
 
 public class UserHandler {
     private static final Logger logger = LoggerFactory.getLogger(UserHandler.class);
@@ -37,5 +38,9 @@ public class UserHandler {
         if (!findUser.getPassword().equals(userLoginData.getPassword())) {
             throw new UnAuthorizedException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
+    }
+
+    public void logout(String userId) {
+        UserDatabase.findUserById(userId).orElseThrow(UserNotFoundException::new);
     }
 }

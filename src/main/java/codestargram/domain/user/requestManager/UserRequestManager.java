@@ -34,8 +34,8 @@ public class UserRequestManager {
         // redirect 응답 전송
         return HttpResponse
                 .found(cookie.get("redirectUrl") != null ? cookie.get("redirectUrl") : "/registration/welcome.html")
-                .header(HttpHeader.SET_COOKIE, createCookie(userSaveData.getUserId()).toString())
-                .header(HttpHeader.SET_COOKIE + 1, createDeleteCookie().toString())
+                .header(HttpHeader.SET_COOKIE, createCookie("SID", userSaveData.getUserId(), 3600, "/").toString())
+                .header(HttpHeader.SET_COOKIE + 1, createCookie("redirectUrl", "", 0, "/").toString())
                 .build();
     }
 
@@ -51,25 +51,29 @@ public class UserRequestManager {
 
         return HttpResponse
                 .found(cookie.get("redirectUrl") != null ? cookie.get("redirectUrl") : "/main")
-                .header(HttpHeader.SET_COOKIE, createCookie(userLoginData.getUserId()).toString())
-                .header(HttpHeader.SET_COOKIE + 1, createDeleteCookie().toString())
+                .header(HttpHeader.SET_COOKIE, createCookie("SID", userLoginData.getUserId(), 3600, "/").toString())
+                .header(HttpHeader.SET_COOKIE + 1, createCookie("redirectUrl", "", 0, "/").toString())
                 .build();
     }
 
-    private Cookie createCookie(String userId) {
-        Cookie cookie = new Cookie();
-        cookie.setSID(Session.setSession(userId));
-        cookie.setPath("/");
-        cookie.setMaxAge(3600);
+    @RequestMapping(path = "/logout", method = HttpMethod.POST)
+    public HttpResponse logout(@Authorize Cookie cookie) {
+        String sid = cookie.get("SID");
+        String userId = Session.getUserId(sid);
+        userHandler.logout(userId);
+        Session.expireSession(sid);
 
-        return cookie;
+        return HttpResponse
+                .found("/")
+                .header(HttpHeader.SET_COOKIE, createCookie("SID", "", 0, "/").toString())
+                .build();
     }
 
-    private Cookie createDeleteCookie() {
+    private Cookie createCookie(String cookieKey, String cookieValue, int maxAge, String path) {
         Cookie cookie = new Cookie();
-        cookie.setCookie("redirectUrl", "");
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
+        cookie.setCookie(cookieKey, cookieValue);
+        cookie.setMaxAge(maxAge);
+        cookie.setPath(path);
 
         return cookie;
     }
