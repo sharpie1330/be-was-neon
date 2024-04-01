@@ -34,7 +34,9 @@ public class UserRequestManager {
         // redirect 응답 전송
         return HttpResponse
                 .found(cookie.get("redirectUrl") != null ? cookie.get("redirectUrl") : "/registration/welcome.html")
-                .header(HttpHeader.SET_COOKIE, createCookie("SID", userSaveData.getUserId(), 3600, "/").toString())
+                .header(HttpHeader.SET_COOKIE,
+                        createCookie("SID", Session.setSession(userSaveData.getUserId()),
+                                3600, "/").toString())
                 .header(HttpHeader.SET_COOKIE + 1, createCookie("redirectUrl", "", 0, "/").toString())
                 .build();
     }
@@ -51,7 +53,8 @@ public class UserRequestManager {
 
         return HttpResponse
                 .found(cookie.get("redirectUrl") != null ? cookie.get("redirectUrl") : "/main")
-                .header(HttpHeader.SET_COOKIE, createCookie("SID", userLoginData.getUserId(), 3600, "/").toString())
+                .header(HttpHeader.SET_COOKIE, createCookie("SID", Session.setSession(userLoginData.getUserId()),
+                        3600, "/").toString())
                 .header(HttpHeader.SET_COOKIE + 1, createCookie("redirectUrl", "", 0, "/").toString())
                 .build();
     }

@@ -9,7 +9,10 @@ public class Session {
 
     // TODO : 1시간 후 만료시키기
     public static String setSession(String userId) {
-        String sessionId = UUID.randomUUID().toString();
+        String sessionId;
+        do {
+            sessionId = UUID.randomUUID().toString();
+        } while (getUserId(sessionId) != null);
         sessionDB.put(sessionId, userId);
         return sessionId;
     }
