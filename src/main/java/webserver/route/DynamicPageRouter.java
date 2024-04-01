@@ -38,8 +38,6 @@ public class DynamicPageRouter {
                         Parameter requestBodyParameter = findAnnotatedParam(method, RequestBody.class);
                         Parameter authorizeParameter = findAnnotatedParam(method, Authorize.class);
 
-                        HttpRequestBodyConverter httpRequestBodyConverter = resolveConverter(httpRequest);
-
                         List<Object> args = new ArrayList<>(2);
 
                         if (authorizeParameter != null) {
@@ -48,6 +46,7 @@ public class DynamicPageRouter {
                         }
 
                         if (requestBodyParameter != null) {
+                            HttpRequestBodyConverter httpRequestBodyConverter = resolveConverter(httpRequest);
                             Object convert = httpRequestBodyConverter.convert(httpRequest.getBody(), requestBodyParameter);
                             args.add(convert);
                         }
