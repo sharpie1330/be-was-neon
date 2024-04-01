@@ -72,6 +72,7 @@ public class CustomExceptionHandler implements ExceptionHandler {
     private HttpResponse handleUnAuthorizedException(UnAuthorizedException uae) {
         Cookie cookie = new Cookie();
         cookie.setCookie("redirectUrl", uae.getErrorMessage());
+        cookie.setMaxAge(300);
 
         return HttpResponse
                 .found("/login")
