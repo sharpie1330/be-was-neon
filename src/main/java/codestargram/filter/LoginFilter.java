@@ -2,7 +2,7 @@ package codestargram.filter;
 
 import codestargram.domain.user.db.UserDatabase;
 import codestargram.exception.user.UserNotFoundException;
-import webserver.exception.server.UnauthorizedException;
+import webserver.exception.server.UnAuthorizedException;
 import webserver.filter.Filter;
 import webserver.http.type.HttpRequest;
 import webserver.session.Session;
@@ -14,12 +14,11 @@ import java.util.List;
 
 public class LoginFilter implements Filter {
 
-    // Fixme: 모든 걸 다 쓸 순 없음... 수정할 것
     private static final List<String> AUTH_BLACK_LIST =
             List.of("/main", "/article");
 
     @Override
-    public void doFilter(HttpRequest httpRequest) throws UnauthorizedException {
+    public void doFilter(HttpRequest httpRequest) throws UnAuthorizedException {
         String path = URLUtils.getPurePath(httpRequest.getRequestLine().getURL());
 
         if (AUTH_BLACK_LIST.stream().noneMatch(path::startsWith)) {
@@ -27,17 +26,18 @@ public class LoginFilter implements Filter {
         }
 
         List<String> cookies = httpRequest.getHeader().getOrDefault("Cookie", Collections.emptyList());
+        UnAuthorizedException unauthorizedException = new UnAuthorizedException(httpRequest.getRequestLine().getURL());
 
         String SID = cookies.stream()
                 .map(cookie -> cookie.trim().split(Delimiter.EQUAL, 2))
                 .filter(kv -> kv.length == 2 && kv[0].equals("SID"))
                 .map(kv -> kv[1])
                 .findFirst()
-                .orElseThrow(UnauthorizedException::new);
+                .orElseThrow(() -> unauthorizedException);
 
         String userId = Session.getUserId(SID);
         if (userId == null) {
-            throw new UnauthorizedException();
+            throw unauthorizedException;
         }
 
         UserDatabase.findUserById(userId).orElseThrow(UserNotFoundException::new);

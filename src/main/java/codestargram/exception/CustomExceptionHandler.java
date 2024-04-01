@@ -8,10 +8,12 @@ import webserver.exception.common.ApplicationException;
 import webserver.exception.common.ServerException;
 import webserver.exception.request.PathNotFoundException;
 import webserver.exception.server.BadRequestException;
-import webserver.exception.server.UnauthorizedException;
+import webserver.exception.server.UnAuthorizedException;
+import webserver.http.type.HttpHeader;
 import webserver.http.type.HttpResponse;
 import webserver.http.type.HttpStatusCode;
 import webserver.http.type.MIMEType;
+import webserver.session.Cookie;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -25,17 +27,17 @@ public class CustomExceptionHandler implements ExceptionHandler {
 
     @Override
     public HttpResponse handleException(Exception e) {
-        if (e instanceof UserAlreadyExistsException uae) {
-            return handleUserAlreadyExistsException(uae);
+        if (e instanceof UserAlreadyExistsException) {
+            return handleUserAlreadyExistsException();
         }
-        if (e instanceof PathNotFoundException pne) {
-            return handlePathNotFoundException(pne);
+        if (e instanceof PathNotFoundException) {
+            return handlePathNotFoundException();
         }
         if (e instanceof BadRequestException be) {
             return handleBadRequestException(be);
         }
-        if (e instanceof UnauthorizedException ue) {
-            return handleUnAuthorizedException(ue);
+        if (e instanceof UnAuthorizedException uae) {
+            return handleUnAuthorizedException(uae);
         }
         if (e instanceof ApplicationException ae) {
             return handleApplicationException(ae);
@@ -46,7 +48,7 @@ public class CustomExceptionHandler implements ExceptionHandler {
         return handleOtherException(e);
     }
 
-    private HttpResponse handleUserAlreadyExistsException(UserAlreadyExistsException uae) {
+    private HttpResponse handleUserAlreadyExistsException() {
         return HttpResponse
                 .found("/registration/register_failed.html")
                 .build();
@@ -61,15 +63,19 @@ public class CustomExceptionHandler implements ExceptionHandler {
                 .build();
     }
 
-    private HttpResponse handlePathNotFoundException(PathNotFoundException pne) {
+    private HttpResponse handlePathNotFoundException() {
         return HttpResponse
                 .found("/error/notfound.html")
                 .build();
     }
 
-    private HttpResponse handleUnAuthorizedException(UnauthorizedException ue) {
+    private HttpResponse handleUnAuthorizedException(UnAuthorizedException uae) {
+        Cookie cookie = new Cookie();
+        cookie.setCookie("redirectUrl", uae.getErrorMessage());
+
         return HttpResponse
                 .found("/login")
+                .header(HttpHeader.SET_COOKIE, cookie.toString())
                 .build();
     }
 

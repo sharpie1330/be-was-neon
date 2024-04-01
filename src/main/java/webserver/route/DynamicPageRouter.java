@@ -1,5 +1,6 @@
 package webserver.route;
 
+import webserver.annotation.Authorize;
 import webserver.annotation.RequestBody;
 import webserver.exception.request.PathNotFoundException;
 import webserver.exception.request.UnsupportedContentTypeException;
@@ -7,12 +8,17 @@ import webserver.http.type.HttpRequest;
 import webserver.http.type.HttpResponse;
 import webserver.annotation.RequestMapping;
 import webserver.http.type.MIMEType;
+import webserver.session.Cookie;
+import webserver.utils.Delimiter;
 import webserver.utils.HttpRequestBodyConverter;
 import webserver.utils.UrlEncodedFormatConverter;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DynamicPageRouter {
@@ -29,13 +35,24 @@ public class DynamicPageRouter {
                     try {
                         Object o = controller.getDeclaredConstructor().newInstance();
 
-                        Parameter parameter = findRequestBodyParam(method);
+                        Parameter requestBodyParameter = findAnnotatedParam(method, RequestBody.class);
+                        Parameter authorizeParameter = findAnnotatedParam(method, Authorize.class);
+
                         HttpRequestBodyConverter httpRequestBodyConverter = resolveConverter(httpRequest);
-                        if (parameter != null) {
-                            Object convert = httpRequestBodyConverter.convert(httpRequest.getBody(), parameter);
-                            return (HttpResponse) method.invoke(o, convert);
+
+                        List<Object> args = new ArrayList<>(2);
+
+                        if (authorizeParameter != null) {
+                            Cookie cookie = configureCookie(httpRequest.getHeader().getOrDefault("Cookie", Collections.emptyList()));
+                            args.add(cookie);
                         }
-                        return (HttpResponse) method.invoke(o);
+
+                        if (requestBodyParameter != null) {
+                            Object convert = httpRequestBodyConverter.convert(httpRequest.getBody(), requestBodyParameter);
+                            args.add(convert);
+                        }
+
+                        return (HttpResponse) method.invoke(o, args.toArray());
                     } catch (InvocationTargetException e) {
                         Throwable targetException = e.getTargetException();
                         throw (Exception) targetException;
@@ -45,6 +62,16 @@ public class DynamicPageRouter {
         }
 
         throw new PathNotFoundException();
+    }
+
+    private Cookie configureCookie(List<String> cookies) {
+        Cookie cookie = new Cookie();
+        for (String string : cookies) {
+            String[] kv = string.trim().split(Delimiter.EQUAL, 2);
+            cookie.setCookie(kv[0], kv[1]);
+        }
+
+        return cookie;
     }
 
     private HttpRequestBodyConverter resolveConverter(HttpRequest httpRequest) {
@@ -66,11 +93,11 @@ public class DynamicPageRouter {
         return false;
     }
 
-    private Parameter findRequestBodyParam(Method method) {
+    private Parameter findAnnotatedParam(Method method, Class<? extends Annotation> clazz) {
         Parameter[] parameters = method.getParameters();
 
         for (Parameter parameter : parameters) {
-            if (parameter.isAnnotationPresent(RequestBody.class)) {
+            if (parameter.isAnnotationPresent(clazz)) {
                 return parameter;
             }
         }

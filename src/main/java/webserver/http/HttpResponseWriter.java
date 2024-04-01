@@ -34,7 +34,11 @@ public class HttpResponseWriter {
             // header
             if (httpHeader != null) {
                 for (Map.Entry<String, List<String>> header : httpHeader.entrySet()) {
-                    dos.writeBytes(header.getKey() + COLON +
+                    String key = header.getKey();
+                    String s = header.getKey().replaceAll("\\d+$", "");
+                    System.out.println(key);
+                    System.out.println(s);
+                    dos.writeBytes(header.getKey().replaceAll("\\d+$", "") + COLON +
                             header.getValue().stream().reduce("", (x, y) -> x.isEmpty() ? y : x + SEMICOLON + y) +
                             NEW_LINE);
                 }
