@@ -89,6 +89,10 @@ public class HttpHeader{
         return headerValue != null && !values().isEmpty() ? headerValue.get(0) : null;
     }
 
+    public List<String> getOrDefault(String key, List<String> defaultValue) {
+        return headers.getOrDefault(key, defaultValue);
+    }
+
     public void set(String headerName, String headerValue) {
         List<String> values = new ArrayList<>(1);
         values.add(headerValue);

@@ -1,15 +1,14 @@
 package codestargram.filter;
 
 import codestargram.domain.user.db.UserDatabase;
-import codestargram.exception.user.UserNotFoundException;
 import webserver.exception.server.UnauthorizedException;
 import webserver.filter.Filter;
 import webserver.http.type.HttpRequest;
-import webserver.session.Cookie;
 import webserver.session.Session;
 import webserver.utils.Delimiter;
 import webserver.utils.URLUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 public class LoginFilter implements Filter {
@@ -20,29 +19,21 @@ public class LoginFilter implements Filter {
 
     @Override
     public void doFilter(HttpRequest httpRequest) throws UnauthorizedException {
-        // white list의 path와 일치하지 않으면 건너뛰기
         String path = URLUtils.getPath(httpRequest.getRequestLine().getURL());
-        if (AUTH_BLACK_LIST.stream().noneMatch(path::equals)) {
-            return;
-        }
+        if (AUTH_BLACK_LIST.contains(path)) {
+            List<String> cookies = httpRequest.getHeader().getOrDefault("Cookie", Collections.emptyList());
 
-        List<String> cookies = httpRequest.getHeader().get("Cookie");
-        if (cookies == null) {
-            throw new UnauthorizedException();
-        }
+            String SID = cookies.stream()
+                    .map(cookie -> cookie.trim().split(Delimiter.EQUAL, 2))
+                    .filter(kv -> kv.length == 2 && kv[0].equals("SID"))
+                    .map(kv -> kv[1])
+                    .findFirst()
+                    .orElseThrow(UnauthorizedException::new);
 
-        Cookie clientCookie = new Cookie();
-        for (String cookie : cookies) {
-            String[] keyValue = cookie.trim().split(Delimiter.EQUAL, 2);
-            clientCookie.setCookie(keyValue[0], keyValue[1]);
+            String userId = Session.getUserId(SID);
+            if (userId == null || UserDatabase.findUserById(userId).isEmpty()) {
+                throw new UnauthorizedException();
+            }
         }
-
-        String SID = clientCookie.get("SID");
-        if (SID == null) {
-            throw new UnauthorizedException();
-        }
-
-        String userId = Session.getUserId(SID);
-        UserDatabase.findUserById(userId).orElseThrow(UserNotFoundException::new);
     }
 }
