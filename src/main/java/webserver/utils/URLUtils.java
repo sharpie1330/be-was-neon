@@ -29,6 +29,15 @@ public class URLUtils {
         return requestUrl;
     }
 
+    public static String getPurePath(String requestUrl) {
+        String path = getPath(requestUrl);
+        int dotIndex = path.lastIndexOf(DOT);
+        if (dotIndex == -1) {
+            return path;
+        }
+        return path.substring(0, path.lastIndexOf(SLASH));
+    }
+
     public static String getQuery(String requestUrl) {
         int firstIndex = requestUrl.indexOf(QUESTION_MARK);
         int lastIndex = requestUrl.lastIndexOf(QUESTION_MARK);
