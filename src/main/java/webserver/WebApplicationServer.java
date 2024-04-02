@@ -10,12 +10,15 @@ import webserver.http.type.HttpRequest;
 import webserver.http.HttpRequestReader;
 import webserver.http.type.HttpResponse;
 import webserver.http.HttpResponseWriter;
+import webserver.interceptor.Intercepting;
+import webserver.interceptor.Interceptor;
 import webserver.route.Router;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.List;
 
 public class WebApplicationServer implements Runnable{
@@ -25,12 +28,15 @@ public class WebApplicationServer implements Runnable{
 
     private final List<Class<?>> controllers;
     private final List<Filter> filters;
+    private final List<Interceptor> interceptors;
     private final ExceptionHandler exceptionHandler;
 
-    public WebApplicationServer(Socket connectionSocket, List<Class<?>> controllers, List<Filter> filters, ExceptionHandler exceptionHandler) {
+    public WebApplicationServer(Socket connectionSocket, List<Class<?>> controllers, List<Filter> filters,
+                                List<Interceptor> interceptors, ExceptionHandler exceptionHandler) {
         this.connection = connectionSocket;
-        this.controllers = controllers;
-        this.filters = filters;
+        this.controllers = controllers != null ? controllers : Collections.emptyList();
+        this.filters = filters != null ? filters : Collections.emptyList();
+        this.interceptors = interceptors != null ? interceptors : Collections.emptyList();
         this.exceptionHandler = exceptionHandler != null ? exceptionHandler : new DefaultExceptionHandler();
     }
 
@@ -42,21 +48,22 @@ public class WebApplicationServer implements Runnable{
             HttpResponseWriter httpResponseWriter = new HttpResponseWriter(out);
             Filtering filtering = new Filtering(filters);
             Router router = new Router(controllers);
+            Intercepting intercepting = new Intercepting(interceptors);
 
-            runServer(httpRequestReader, httpResponseWriter, filtering, router);
+            runServer(httpRequestReader, httpResponseWriter, filtering, router, intercepting);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void runServer(HttpRequestReader httpRequestReader, HttpResponseWriter httpResponseWriter, Filtering filtering, Router router) {
+    private void runServer(HttpRequestReader httpRequestReader, HttpResponseWriter httpResponseWriter, Filtering filtering, Router router, Intercepting intercepting) {
         try {
             HttpRequest httpRequest = httpRequestReader.parseInputStream();
 
             logger.debug("request method : {}, request url : {}", httpRequest.getRequestLine().getHttpMethod(), httpRequest.getRequestLine().getURL());
 
             filtering.filter(httpRequest);
-            HttpResponse httpResponse = router.route(httpRequest);
+            HttpResponse httpResponse = intercepting.interceptResponse(httpRequest, router.route(httpRequest));
             httpResponseWriter.sendResponse(httpResponse);
         } catch (Exception e) {
             httpResponseWriter.sendResponse(exceptionHandler.handleException(e));
