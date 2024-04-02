@@ -38,18 +38,21 @@ public class LoginInterceptor implements Interceptor {
             return httpResponse;
         }
 
-        // headers
-        Map<String, List<String>> headers = new HashMap<>();
-        Set<Map.Entry<String, List<String>>> entries = httpResponse.getHeaders().entrySet();
-        for (Map.Entry<String, List<String>> entry : entries) {
-            headers.put(entry.getKey(), entry.getValue());
-        }
-
         // 바디 변경
         byte[] body = httpResponse.getBody();
         // TODO : user 정보에 profile 이미지 추가 userProfileUrl
         User user = UserDatabase.findUserById(userId).orElseThrow(UserNotFoundException::new);
         String html = changeHeader(body, "/img/user-default.png", user.getName());
+        body = html.getBytes();
+
+        // 헤더 content length 변경
+        HttpHeader httpHeader = httpResponse.getHeaders();
+        httpHeader.setContentLength(body.length);
+        Map<String, List<String>> headers = new HashMap<>();
+        Set<Map.Entry<String, List<String>>> entries = httpHeader.entrySet();
+        for (Map.Entry<String, List<String>> entry : entries) {
+            headers.put(entry.getKey(), entry.getValue());
+        }
 
         return HttpResponse.status(httpStatusCode)
                 .headers(headers)
@@ -74,10 +77,8 @@ public class LoginInterceptor implements Interceptor {
                               </li>
                               <li class="header__menu__item">
                                 <div class="post__account">
-                                  <img class="post__account__img"  src=""" + "\"" + userProfileUrl + "\"" + """
-                                   alt="게시글 작성자 프로필 이미지"/>
-                                  <p class="post__account__nickname">"""+ nickname + """
-                                  </p>
+                                  <img class="post__account__img"  src=""" + "\"" + userProfileUrl + "\" alt=\"게시글 작성자 프로필 이미지\"/>" + """
+                                  <p class="post__account__nickname">"""+ nickname + "</p>" + """
                                 </div>
                               </li>
                               <li class="header__menu__item">

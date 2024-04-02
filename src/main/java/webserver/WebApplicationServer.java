@@ -42,6 +42,7 @@ public class WebApplicationServer implements Runnable{
 
     @Override
     public void run() {
+        long start = System.currentTimeMillis();
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequestReader httpRequestReader = new HttpRequestReader(in);
@@ -54,6 +55,8 @@ public class WebApplicationServer implements Runnable{
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+        long end = System.currentTimeMillis();
+        logger.debug("elapsed Time : {}ms", end - start);
     }
 
     private void runServer(HttpRequestReader httpRequestReader, HttpResponseWriter httpResponseWriter, Filtering filtering, Router router, Intercepting intercepting) {
