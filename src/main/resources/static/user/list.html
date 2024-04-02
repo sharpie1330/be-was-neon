@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../reset.css" rel="stylesheet" />
+    <link href="../global.css" rel="stylesheet" />
+    <link href="../main.css" rel="stylesheet" />
+    <link href="../custom.css" rel="stylesheet" />
+    <title>사용자 목록</title>
+    <style>
+        h1{
+            margin: 20px;
+        }
+        table {
+            border-collapse: separate;
+            border-spacing: 30px;
+        }
+        th {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/main"><img src="../img/signiture.svg" alt="코드스타그램 로고"/></a>
+        <ul class="header__menu">
+            <li class="header__menu__item">
+                <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
+            </li>
+            <li class="header__menu__item">
+                <form action="/logout" method="post">
+                    <button id="logout-btn" class="btn btn_ghost btn_size_s">
+                        로그아웃
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </header>
+    <h1>사용자 목록</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>닉네임</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!--user list-->
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
