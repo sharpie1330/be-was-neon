@@ -4,9 +4,10 @@ import codestargram.domain.user.db.UserDatabase;
 import codestargram.exception.user.UserNotFoundException;
 import webserver.exception.server.UnAuthorizedException;
 import webserver.filter.Filter;
+import webserver.http.type.HttpHeader;
 import webserver.http.type.HttpRequest;
+import webserver.session.Cookie;
 import webserver.session.Session;
-import webserver.utils.Delimiter;
 import webserver.utils.URLUtils;
 
 import java.util.Collections;
@@ -25,15 +26,13 @@ public class LoginFilter implements Filter {
             return;
         }
 
-        List<String> cookies = httpRequest.getHeader().getOrDefault("Cookie", Collections.emptyList());
+        Cookie cookie = new Cookie(httpRequest.getHeader().getOrDefault(HttpHeader.COOKIE, Collections.emptyList()));
         UnAuthorizedException unauthorizedException = new UnAuthorizedException(httpRequest.getRequestLine().getURL());
 
-        String SID = cookies.stream()
-                .map(cookie -> cookie.trim().split(Delimiter.EQUAL, 2))
-                .filter(kv -> kv.length == 2 && kv[0].equals("SID"))
-                .map(kv -> kv[1])
-                .findFirst()
-                .orElseThrow(() -> unauthorizedException);
+        String SID = cookie.get("SID");
+        if (SID == null) {
+            throw unauthorizedException;
+        }
 
         String userId = Session.getUserId(SID);
         if (userId == null) {

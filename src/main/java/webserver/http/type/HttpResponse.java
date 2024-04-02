@@ -81,11 +81,6 @@ public class HttpResponse {
             this.headers = new HttpHeader();
         }
 
-        public ResponseBuilder(HttpStatusCode httpStatusCode, HttpHeader headers) {
-            this.httpStatusCode = httpStatusCode;
-            this.headers = headers;
-        }
-
         @Override
         public ResponseBuilder header(String headerName, String... headerValues) {
             headers.addAll(headerName, Arrays.stream(headerValues).toList());

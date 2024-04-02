@@ -4,6 +4,7 @@ import webserver.annotation.Authorize;
 import webserver.annotation.RequestBody;
 import webserver.exception.request.PathNotFoundException;
 import webserver.exception.request.UnsupportedContentTypeException;
+import webserver.http.type.HttpHeader;
 import webserver.http.type.HttpRequest;
 import webserver.http.type.HttpResponse;
 import webserver.annotation.RequestMapping;
@@ -41,7 +42,7 @@ public class DynamicPageRouter {
                         List<Object> args = new ArrayList<>(2);
 
                         if (authorizeParameter != null) {
-                            Cookie cookie = configureCookie(httpRequest.getHeader().getOrDefault("Cookie", Collections.emptyList()));
+                            Cookie cookie = configureCookie(httpRequest.getHeader().getOrDefault(HttpHeader.COOKIE, Collections.emptyList()));
                             args.add(cookie);
                         }
 
