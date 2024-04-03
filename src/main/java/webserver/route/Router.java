@@ -30,7 +30,7 @@ public class Router {
         // GET 요청이고, filePath 조회한 결과가 DYNAMIC_FLAG가 아닌 경우에만 정적 페이지 라우팅
         if (httpRequest.getRequestLine().getHttpMethod().equals(HttpMethod.GET) &&
                 !filePath.equals(DYNAMIC_FLAG)) {
-            return staticPageRouter.routeStaticPage(httpRequest, filePath);
+            return staticPageRouter.routeStaticPage(filePath);
         }
 
         return dynamicPageRouter.routeDynamicPage(httpRequest, path);
@@ -39,13 +39,15 @@ public class Router {
     private String getFilePath(String path) {
         String filePath = STATIC_SOURCE_PATH + path;
         File file = new File(filePath);
-        if (file.isDirectory()) {
-            if (file.exists()) {
-                return filePath.concat(Delimiter.SLASH + INDEX_HTML);
+
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                return filePath + Delimiter.SLASH + INDEX_HTML;
             }
-            return DYNAMIC_FLAG;
+            return filePath;
         }
-        return filePath;
+
+        return DYNAMIC_FLAG;
     }
 
 }

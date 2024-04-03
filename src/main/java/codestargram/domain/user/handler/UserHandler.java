@@ -1,5 +1,7 @@
 package codestargram.domain.user.handler;
 
+import codestargram.domain.user.data.UserData;
+import codestargram.domain.user.data.UserListData;
 import codestargram.domain.user.data.UserLoginData;
 import codestargram.domain.user.data.UserSaveData;
 import codestargram.domain.user.db.UserDatabase;
@@ -9,7 +11,10 @@ import codestargram.exception.user.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.exception.server.UnAuthorizedException;
-import webserver.session.Session;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class UserHandler {
     private static final Logger logger = LoggerFactory.getLogger(UserHandler.class);
@@ -42,5 +47,19 @@ public class UserHandler {
 
     public void logout(String userId) {
         UserDatabase.findUserById(userId).orElseThrow(UserNotFoundException::new);
+    }
+
+    public UserListData getUsers(String userId) {
+        UserDatabase.findUserById(userId).orElseThrow(UserNotFoundException::new);
+
+        List<UserData> userDataList = new ArrayList<>();
+
+        Collection<User> allUsers = UserDatabase.findAll();
+        for (User user : allUsers) {
+            UserData userData = new UserData(user.getUserId(), user.getName(), user.getEmail());
+            userDataList.add(userData);
+        }
+
+        return new UserListData(userDataList);
     }
 }

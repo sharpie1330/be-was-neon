@@ -1,19 +1,19 @@
 package codestargram.domain.user.requestManager;
 
+import codestargram.domain.user.data.UserListData;
 import codestargram.domain.user.data.UserLoginData;
 import codestargram.domain.user.data.UserSaveData;
 import codestargram.exception.user.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.WebServer;
 import webserver.annotation.Authorize;
 import webserver.annotation.RequestBody;
 import webserver.annotation.Valid;
 import webserver.exception.server.UnAuthorizedException;
-import webserver.http.type.HttpHeader;
-import webserver.http.type.HttpResponse;
+import webserver.http.type.*;
 import webserver.annotation.RequestMapping;
 import codestargram.domain.user.handler.UserHandler;
-import webserver.http.type.HttpMethod;
 import webserver.session.Cookie;
 import webserver.session.Session;
 
@@ -70,6 +70,21 @@ public class UserRequestManager {
                 .found("/")
                 .header(HttpHeader.SET_COOKIE, createCookie("SID", "", 0, "/").toString())
                 .build();
+    }
+
+    @RequestMapping(path = "/user/list", method = HttpMethod.GET)
+    public HttpResponse getUsers(@Authorize Cookie cookie) {
+        String sid = cookie.get("SID");
+        String userId = Session.getUserId(sid);
+        UserListData users = userHandler.getUsers(userId);
+
+        HttpBody httpBody = users.fromUserListData(WebServer.STATIC_SOURCE_PATH + "/user/list.html");
+
+        return HttpResponse
+                .ok()
+                .contentType(MIMEType.html)
+                .contentLength(httpBody.getBody().length)
+                .body(httpBody.getBody());
     }
 
     private Cookie createCookie(String cookieKey, String cookieValue, int maxAge, String path) {

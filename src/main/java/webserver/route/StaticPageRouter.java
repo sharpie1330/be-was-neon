@@ -17,7 +17,7 @@ public class StaticPageRouter {
 
     }
 
-    public HttpResponse routeStaticPage(HttpRequest httpRequest, String filePath) {
+    public HttpResponse routeStaticPage(String filePath) {
         File file = new File(filePath);
 
         try (FileInputStream fileIn = new FileInputStream(file)) {
